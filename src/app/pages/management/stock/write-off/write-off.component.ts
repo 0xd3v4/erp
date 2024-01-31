@@ -28,6 +28,7 @@ export class StockWriteOffComponent implements OnInit, OnDestroy {
     payments: []
   }
 
+  selectedIds: number[] = [];
 
   totalPrice = 0;
   totalVat = 0;
@@ -49,7 +50,6 @@ export class StockWriteOffComponent implements OnInit, OnDestroy {
     private route: ActivatedRoute,
     private formBuilder: FormBuilder
   ) {
-    console.log('OPS X')
     this.generalForm = formBuilder.group({
       warehouse: [null, [Validators.required]],
       comment: [null],
@@ -61,7 +61,6 @@ export class StockWriteOffComponent implements OnInit, OnDestroy {
       .pipe(
         takeUntil(this._destroyed),
         switchMap((params) => {
-          console.log('PARAMS', params)
           this.id = params['id'];
 
           return combineLatest([
@@ -103,8 +102,6 @@ export class StockWriteOffComponent implements OnInit, OnDestroy {
             }
 
           }
-          console.log('DIFF', value, this.generalForm.controls['warehouse'].value)
-
         }
       }
     })
@@ -119,6 +116,7 @@ export class StockWriteOffComponent implements OnInit, OnDestroy {
       } else {
         if (typeof value == 'object' && value) {
           this.operation.items?.push(value);
+          this.selectedIds.push(value.id)
           this.itemsControl.patchValue(null)
         }
       }
@@ -149,7 +147,6 @@ export class StockWriteOffComponent implements OnInit, OnDestroy {
   private fetchItemsInStock() {
     const dateString = moment(this.dateControl.value).format('DD.MM.YYYY') + moment().format(' HH:mm:ss');
     const date = moment(dateString, 'DD.MM.YYYY HH:mm:ss');
-    console.log('date', date.toISOString())
     this.goodsService.fetchItemsInStock(this.generalForm.controls['warehouse'].value.id, date.toISOString()).subscribe((v) => {
       console.log('V', v)
       this.goodsData = of(v)

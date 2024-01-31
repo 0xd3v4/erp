@@ -114,11 +114,16 @@
     </div>
     <div class="col-span-1 flex items-center lg:justify-end text-right -mr-2">
       <span class="lg:hidden text-gray-400">Цена: </span>
-      <span class="px-2 outline-gray-200"
-            #priceField
-            [contentEditable]="false">
+      <span #priceField *ngIf="item.item_id; else newRow">
+        {{((item.value?.price || 1) | number:'1.2-2') || '' | money:false:false}}
+      </span>
+      <ng-template #newRow>
+        <span class="px-2 outline-gray-200"
+              #priceField
+              [contentEditable]="false">
       {{(((item.total_price || 0) / (item.total_quantity || 1)) | number:'1.2-2') || '' | money:false:false}}
     </span>
+      </ng-template>
       <!--    <span class="">₽</span>-->
     </div>
     <div class="col-span-1 lg:text-right">

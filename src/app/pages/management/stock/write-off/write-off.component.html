@@ -29,7 +29,7 @@
                [matAutocomplete]="whComplete"
                [formControlName]="'warehouse'">
         <mat-autocomplete #whComplete="matAutocomplete" [displayWith]="displayFnWh">
-          <mat-option *ngFor="let data of warehousesData | async"
+          <mat-option *ngFor="let data of (warehousesData | async)"
                       [value]="data">
             <div class="flex flex-col py-1">
               <div *ngIf="data.name">{{data.name ? data.name : '-'}}</div>
