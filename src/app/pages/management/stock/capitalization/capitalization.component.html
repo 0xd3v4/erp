@@ -1,0 +1,126 @@
+<div class="flex flex-col min-h-screen pt-12 px-2 lg:px-12 bg-back">
+
+  <div class="flex flex-col bg-white rounded-xl max-w-[750px] p-4 lg:p-8 border-[1.5px] border-gray-100">
+    <div class="flex items-center space-x-4">
+      <!--      <button class="h-8 w-8 -ml-1 rounded-full border-transparent flex items-center justify-center hover:bg-gray-200 transition-all duration-300"-->
+      <!--              (click)="back()">-->
+      <!--        <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px"><path d="M0 0h24v24H0z" fill="none"/><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg>-->
+      <!--      </button>-->
+      <div class="flex items-center space-x-2 header-field relative">
+        <div>Оприходование от</div>
+        <div class="relative bg-white">
+          {{dateControl.value | date:'dd.MM.YYYY'}}
+          <input [formControl]="dateControl" class="absolute opacity-0 -z-10" [matDatepicker]="picker" value="12.01.2024 12:00">
+        </div>
+
+        <mat-datepicker #picker></mat-datepicker>
+        <button class="h-10 w-10 rounded-full border-none flex items-center justify-center hover:bg-gray-200 transition-all duration-300" (click)="picker.open()">
+          <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" ><path d="M0 0h24v24H0z" fill="none"/><path d="M17 12h-5v5h5v-5zM16 1v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2h-1V1h-2zm3 18H5V8h14v11z"/></svg>
+        </button>
+      </div>
+    </div>
+    <div [formGroup]="generalForm" class="grid lg:grid-cols-2 gap-x-4 gap-y-4 mt-4">
+
+      <div class="bg-input rounded-xl p-1 input-field h-[50px]">
+        <div class="input-label px-2 input-label">Склад</div>
+        <input class="w-full text-xs px-2 bg-input rounded-xl border-none outline-none"
+               placeholder="Выберите склад"
+               [required]="true"
+               [matAutocomplete]="whComplete"
+               [formControlName]="'warehouse'">
+        <mat-autocomplete #whComplete="matAutocomplete" [displayWith]="displayFnWh">
+          <mat-option *ngFor="let data of warehousesData | async"
+                      [value]="data ">
+            <div class="flex flex-col py-1">
+              <div *ngIf="data.name">{{data.name ? data.name : '-'}}</div>
+              <div style="font-size: 11px; line-height: 12px" class=" text-gray-400">{{data.common_warehouse_name}}</div>
+            </div>
+          </mat-option>
+        </mat-autocomplete>
+      </div>
+      <div class="bg-input rounded-xl p-1 input-field h-[50px]">
+        <div class="input-label px-2 input-label">Комментарий</div>
+        <input class="w-full text-xs px-2 bg-input rounded-xl border-none outline-none"
+               placeholder="Текст комментария"
+               [formControlName]="'comment'">
+      </div>
+
+    </div>
+  </div>
+
+  <div class="mt-6 flex flex-col bg-white rounded-xl max-w-[1100px] p-4 lg:p-8 border-[1.5px] border-gray-100">
+    <div class="flex items-start space-x-2 text-lg">
+      <div class="header-field">Товары</div>
+      <div class="text-xs text-gray-400">{{operation.items?.length || 0}}</div>
+    </div>
+    <div *ngIf="operation.items && operation.items.length > 0"
+         class="hidden lg:grid grid-cols-14 gap-x-4 py-2 table-header mt-2" style="">
+      <div class="col-span-6">Наименование</div>
+      <div class="col-span-2 text-right">Количество</div>
+      <div class="col-span-2 text-right">Цена</div>
+      <div class="col-span-2 text-right">Стоимость</div>
+    </div>
+    <app-operation-item-card *ngFor="let item of (operation.items || []); let index = index"
+                             [item]="item"
+                             [type]="'capitalization'"
+                             (onUpdate)="whenUpdateItem($event, index)"
+                             (onRemove)="whenRemoveItem(index)"></app-operation-item-card>
+    <ng-template [ngIf]="!(operation.items && operation.items.length > 0)">
+      <div class="my-8 text-center text-gray-400 mx-auto">
+        Не добавлено ни одного товара
+      </div>
+    </ng-template>
+    <input [ngClass]="{'mt-4': operation.items && operation.items.length > 0}"
+           style="border: 1px solid #b8b8b8 !important"
+           class="rounded-lg px-6 py-2.5 lg:w-3/5 outline-gray-300"
+           [formControl]="itemsControl"
+           [matAutocomplete]="iComplete"
+           [placeholder]="'Добавить позицию - введите наименование'">
+    <mat-autocomplete #iComplete="matAutocomplete" [displayWith]="displayFn">
+      <mat-option *ngFor="let data of goodsData | async"
+                  [value]="data ">
+        <div class="flex flex-col py-1">
+          <div *ngIf="data.name">{{data.name ? data.name : '-'}}</div>
+        </div>
+      </mat-option>
+    </mat-autocomplete>
+    <div *ngIf="operation.items && operation.items.length > 0"
+         class="grid grid-cols-7 gap-x-4 py-2 font-bold mt-2">
+      <div class="col-span-6">Итого</div>
+<!--      <div>-->
+<!--        {{totalVat.toLocaleString('ru-RU')}}-->
+<!--        <span class="">₽</span></div>-->
+      <div class="text-right">
+        {{totalPrice.toLocaleString('ru-RU')}}
+        <span class="">₽</span></div>
+    </div>
+    <div *ngIf="operation.items && operation.items.length > 0"
+         class="flex items-center space-x-10">
+      <div>Накладные расходы:</div>
+      <input class="border-transparent outline-gray-200"
+             type="number"
+             [formControl]="overheadsControl">
+    </div>
+  </div>
+
+  <div class="mt-6 pb-8 lg:pb-0 flex flex-col lg:flex-row items-center space-y-4 lg:space-y-0 lg:space-x-4">
+    <button class="rounded-xl px-6 text-white fill-white dialog-button bg-burger disabled:bg-gray-300 lg:h-[40px] w-[210px]"
+            *ngIf="id === 'new'; else patching"
+            [disabled]="generalForm.invalid || !(operation.items && operation.items.length > 0)"
+            (click)="createOperation()">
+      <div>Создать</div>
+    </button>
+    <ng-template #patching>
+      <button class="rounded-xl px-6 text-white fill-white dialog-button bg-update disabled:bg-gray-300 lg:h-[40px] w-full lg:w-[210px]"
+              [disabled]="generalForm.invalid || !(operation.items && operation.items.length > 0)"
+              (click)="patchOperation()">
+        <div>Обновить</div>
+      </button>
+      <button class="rounded-xl px-6 text-white fill-white dialog-button bg-remove disabled:bg-gray-300 lg:h-[40px] w-full lg:w-[210px]"
+              (click)="removeOperation()">
+        <div>Удалить</div>
+      </button>
+    </ng-template>
+  </div>
+
+</div>

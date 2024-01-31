@@ -1,0 +1,86 @@
+<div class="flex flex-col pb-4 relative">
+  <div class="py-4 px-0 dialog-header">{{dialogHeader}}</div>
+  <div class="w-full">
+    <div class="mx-0 bg-input rounded-xl p-1 input-field">
+      <div class="input-label px-2">{{nameHeader}}</div>
+      <input class="w-full text-xs px-2 bg-input rounded-xl border-none outline-none"
+             placeholder="Укажите название товара"
+             [formControl]="nameForm"
+             [required]="true">
+    </div>
+    <div *ngIf="hasCategories" class="mx-0 mt-2 bg-input rounded-xl p-1 input-field">
+      <div class="input-label px-2">Категория товара</div>
+      <input class="w-full text-xs px-2 bg-input rounded-xl border-none outline-none"
+             placeholder="Выберите категорию товара"
+             [formControl]="categoryForm"
+             [required]="true"
+             [matAutocomplete]="autoComplete">
+      <mat-autocomplete #autoComplete="matAutocomplete" [displayWith]="displayFn">
+        <mat-option *ngFor="let data of categoriesData | async"
+                    [value]="data ">
+          <div *ngIf="data.name">{{data.name}}</div>
+        </mat-option>
+      </mat-autocomplete>
+    </div>
+    <div *ngIf="hasSubCategories" class="mx-0 mt-3 bg-input rounded-xl p-1 input-field">
+      <div class="input-label px-2">Подкатегория товара</div>
+      <input class="w-full text-xs px-2 bg-input rounded-xl border-none outline-none"
+             placeholder="Выберите подкатегорию товара"
+             [formControl]="subcategoryForm"
+             [matAutocomplete]="autoCompleteSub">
+      <mat-autocomplete #autoCompleteSub="matAutocomplete" [displayWith]="displayFn">
+        <mat-option *ngFor="let data of subcategoriesData | async"
+                    [value]="data">
+          <div *ngIf="data.name">{{data.name}}</div>
+        </mat-option>
+      </mat-autocomplete>
+    </div>
+    <div *ngIf="hasUnits" class="mx-0 mt-3 bg-input rounded-xl p-1 input-field">
+      <div class="text-xs text-gray-600 px-1">Единицы измерения</div>
+      <input class="w-full text-xs px-1 bg-input rounded-xl border-none outline-none"
+             placeholder="Выберите единицу измерения товара"
+             [formControl]="unitForm"
+             [required]="true"
+             [matAutocomplete]="autoCompleteUnits">
+      <mat-autocomplete #autoCompleteUnits="matAutocomplete" [displayWith]="displayFn">
+        <mat-option *ngFor="let data of unitsData | async"
+                    [value]="data">
+          <div *ngIf="data.name">{{data.name}}</div>
+        </mat-option>
+      </mat-autocomplete>
+    </div>
+<!--    <div *ngIf="data.data.entityType === 'goods'" class="mx-0 mt-3 bg-gray-100 rounded-xl p-1 input-field">-->
+<!--      <div class="input-label px-2">SKU</div>-->
+<!--      <input class="w-full text-xs px-2 bg-gray-100 rounded-xl border-none outline-none"-->
+<!--             placeholder="Укажите SKU"-->
+<!--             [formControl]="skuForm">-->
+<!--    </div>-->
+    <div *ngIf="data.data.entityType === 'goods'" class="mx-0 mt-3 bg-input rounded-xl p-1 input-field">
+      <div class="input-label px-2">Минимальный баланс</div>
+      <input class="w-full text-xs px-2 bg-input rounded-xl border-none outline-none"
+             placeholder="Укажите минимальный баланс"
+             type="number"
+             [formControl]="balanceForm">
+    </div>
+    <div *ngIf="data.data.entityType === 'goods'" class="mx-0 mt-3 bg-input rounded-xl p-1 input-field">
+      <div class="input-label px-2">Комментарий</div>
+      <textarea class="w-full text-xs px-2 bg-input rounded-xl border-none outline-none"
+                placeholder="Комментарий"
+                [formControl]="commentForm"></textarea>
+    </div>
+    <div class="px-0 mt-3">
+      <button (click)="change()" class="rounded-xl py-2.5 w-full w-full text-white dialog-button disabled:bg-gray-200"
+              [ngClass]="{'bg-burger': !data.data.item, 'bg-update': data.data.item}">
+        {{saveButtonText}}
+      </button>
+      <button *ngIf="data.data.item"
+              (click)="remove()"
+              class="rounded-xl bg-remove py-2.5 w-full w-full text-white mt-3 dialog-button">
+        Удалить
+      </button>
+    </div>
+  </div>
+  <div class="rounded-full h-10 w-10 fill-gray-600 cursor-pointer flex items-center justify-center hover:bg-gray-100 absolute -right-2 top-2 transition-all duration-300" (click)="closeDialog()">
+    <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px"><path d="M0 0h24v24H0z" fill="none"/><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+  </div>
+</div>

@@ -1,0 +1,207 @@
+<div class="flex flex-col pb-4 relative max-h-[80vh] overflow-hidden " style="width: 100vw; max-width: 700px;">
+  <div class="py-4 px-4 dialog-header">{{dialogHeader}}</div>
+
+  <ng-template [ngIf]="data.type == 'income'">
+    <div class="w-full overflow-auto custom-scroll-2">
+      <div class="mx-4 bg-input rounded-xl p-1 input-field">
+        <div class="input-label px-2">Дата</div>
+        <input class="w-full text-xs px-2 bg-input rounded-xl border-none outline-none"
+               placeholder="Выберите дату"
+               [formControl]="dateForm"
+               [matDatepicker]="picker" (click)="picker.open()">
+        <mat-datepicker #picker></mat-datepicker>
+      </div>
+      <div class="mx-4 mt-4 bg-input rounded-xl p-1 input-field">
+        <div class="input-label px-2">На счёт</div>
+        <input class="w-full text-xs px-2 bg-input rounded-xl border-none outline-none"
+               placeholder="Счёт"
+               [formControl]="walletForm"
+               [required]="true"
+               [matAutocomplete]="autoComplete">
+        <mat-autocomplete #autoComplete="matAutocomplete" [displayWith]="displayFn">
+          <mat-option *ngFor="let data of walletsData | async"
+                      [value]="data ">
+            <div *ngIf="data.name">{{data.name}}</div>
+          </mat-option>
+        </mat-autocomplete>
+      </div>
+      <div class="mx-4 mt-4 bg-input rounded-xl p-1 input-field">
+        <div class="input-label px-2">Сумма, ₽</div>
+        <input class="w-full text-xs px-2 bg-input rounded-xl border-none outline-none"
+               placeholder="0"
+               type="number"
+               [formControl]="valueForm">
+      </div>
+      <div class="mx-4 mt-4 bg-input rounded-xl p-1 input-field">
+        <div class="input-label px-2">Категория</div>
+        <input class="w-full text-xs px-2 bg-input rounded-xl border-none outline-none"
+               placeholder="Выберите категорию платежа"
+               [formControl]="categoryForm"
+               [matAutocomplete]="autoCompleteSub">
+        <mat-autocomplete #autoCompleteSub="matAutocomplete" [displayWith]="displayFn">
+          <mat-option *ngFor="let data of categoriesData | async"
+                      [value]="data">
+            <div *ngIf="data.name">{{data.name}}</div>
+          </mat-option>
+        </mat-autocomplete>
+      </div>
+      <div class="mx-4 mt-4 bg-input rounded-xl p-1 input-field">
+        <div class="text-xs text-gray-600 px-1">Контрагент (кто заплатил)</div>
+        <input class="w-full text-xs px-1 bg-input rounded-xl border-none outline-none"
+               placeholder="Укажите контрагента"
+               [formControl]="counterpartyForm"
+               [required]="true"
+               [matAutocomplete]="autoCompleteUnits">
+        <mat-autocomplete #autoCompleteUnits="matAutocomplete" [displayWith]="displayFn">
+          <mat-option *ngFor="let data of counterpartiesData | async"
+                      [value]="data">
+            <div *ngIf="data.full_name">{{data.full_name}}</div>
+          </mat-option>
+        </mat-autocomplete>
+      </div>
+      <div class="mx-4 mt-4 bg-input rounded-xl p-1 input-field">
+        <div class="input-label px-2">Комиссия, ₽</div>
+        <input class="w-full text-xs px-2 bg-input rounded-xl border-none outline-none"
+               placeholder="0"
+               type="number"
+               [formControl]="commissionForm">
+      </div>
+
+      <div class="mx-4 mt-4 bg-input rounded-xl p-1 input-field">
+        <div class="input-label px-2">Комментарий</div>
+        <textarea class="w-full text-xs px-2 bg-input rounded-xl border-none outline-none"
+                  placeholder="Комментарий"
+                  [formControl]="commentForm"></textarea>
+      </div>
+      <div class="px-3 mt-4">
+        <button (click)="change()" class="rounded-xl py-2.5 w-full w-full text-white dialog-button"
+                [ngClass]="{'bg-burger': !data.id, 'bg-update': data.id}">
+          {{saveButtonText}}
+        </button>
+        <button *ngIf="data.id"
+                (click)="remove()"
+                class="rounded-xl bg-remove py-2.5 w-full w-full text-white mt-3 dialog-button">
+          Удалить
+        </button>
+      </div>
+    </div>
+  </ng-template>
+
+  <ng-template [ngIf]="data.type == 'outcome'">
+    <div class="w-full overflow-auto custom-scroll-2">
+      <div class="mx-4 bg-input rounded-xl p-1 input-field">
+        <div class="input-label px-2">Дата</div>
+        <input class="w-full text-xs px-2 bg-input rounded-xl border-none outline-none"
+               placeholder="Выберите дату"
+               [formControl]="dateForm"
+               [matDatepicker]="picker" (click)="picker.open()">
+        <mat-datepicker #picker></mat-datepicker>
+      </div>
+      <div class="mx-4 mt-4 bg-input rounded-xl p-1 input-field">
+        <div class="input-label px-2">Со счета счёт</div>
+        <input class="w-full text-xs px-2 bg-input rounded-xl border-none outline-none"
+               placeholder="Счёт"
+               [formControl]="walletForm"
+               [required]="true"
+               [matAutocomplete]="autoComplete">
+        <mat-autocomplete #autoComplete="matAutocomplete" [displayWith]="displayFn">
+          <mat-option *ngFor="let data of walletsData | async"
+                      [value]="data ">
+            <div *ngIf="data.name">{{data.name}}</div>
+          </mat-option>
+        </mat-autocomplete>
+      </div>
+      <div class="mx-4 mt-4 bg-input rounded-xl p-1 input-field">
+        <div class="input-label px-2">Сумма, ₽</div>
+        <input class="w-full text-xs px-2 bg-input rounded-xl border-none outline-none"
+               placeholder="0"
+               type="number"
+               [formControl]="valueForm">
+      </div>
+      <div class="mx-4 mt-4 bg-input rounded-xl p-1 input-field">
+        <div class="input-label px-2">Категория</div>
+        <input class="w-full text-xs px-2 bg-input rounded-xl border-none outline-none"
+               placeholder="Выберите категорию платежа"
+               [formControl]="categoryForm"
+               [matAutocomplete]="autoCompleteSub">
+        <mat-autocomplete #autoCompleteSub="matAutocomplete" [displayWith]="displayFn">
+          <mat-option *ngFor="let data of categoriesData | async"
+                      [value]="data">
+            <div *ngIf="data.name">{{data.name}}</div>
+          </mat-option>
+        </mat-autocomplete>
+      </div>
+      <div class="mx-4 mt-4 bg-input rounded-xl p-1 input-field">
+        <div class="text-xs text-gray-600 px-1">Контрагент (кому заплатил)</div>
+        <input class="w-full text-xs px-1 bg-input rounded-xl border-none outline-none"
+               placeholder="Укажите контрагента"
+               [formControl]="counterpartyForm"
+               [required]="true"
+               [matAutocomplete]="autoCompleteUnits">
+        <mat-autocomplete #autoCompleteUnits="matAutocomplete" [displayWith]="displayFn">
+          <mat-option *ngFor="let data of counterpartiesData | async"
+                      [value]="data">
+            <div *ngIf="data.full_name">{{data.full_name}}</div>
+          </mat-option>
+        </mat-autocomplete>
+      </div>
+      <div class="mx-4 mt-4 bg-input rounded-xl p-1 input-field">
+        <div class="input-label px-2">Комиссия, ₽</div>
+        <input class="w-full text-xs px-2 bg-input rounded-xl border-none outline-none"
+               placeholder="0"
+               type="number"
+               [formControl]="commissionForm">
+      </div>
+
+      <div class="mx-4 mt-4 bg-input rounded-xl p-1 input-field">
+        <div class="input-label px-2">Комментарий</div>
+        <textarea class="w-full text-xs px-2 bg-input rounded-xl border-none outline-none"
+                  placeholder="Комментарий"
+                  [formControl]="commentForm"></textarea>
+      </div>
+      <div class="px-3 mt-4">
+        <button (click)="change()" class="rounded-xl py-2.5 w-full w-full text-white dialog-button"
+                [ngClass]="{'bg-burger': !data.id, 'bg-update': data.id}">
+          {{saveButtonText}}
+        </button>
+        <button *ngIf="data.id"
+                (click)="remove()"
+                class="rounded-xl bg-remove py-2.5 w-full w-full text-white mt-3 dialog-button">
+          Удалить
+        </button>
+      </div>
+    </div>
+  </ng-template>
+
+  <ng-template [ngIf]="data.type == 'link'">
+    <div class="mx-4 flex-1 overflow-auto custom-scroll-2">
+      <div class="overflow-auto">
+        <div *ngFor="let payment of paymentData"
+             class="flex justify-between items-center payment-item bg-white transition-all dutation-300" (click)="handleClick($event, payment.id)">
+          <div class="flex flex-col">
+            <div class="payment-date">{{payment.created_at | datetime:'DD.MM.YYYY'}}</div>
+            <div class="payment-wallet">{{payment.wallet}}</div>
+            <div class="payment-type">{{payment.payment_type}}</div>
+          </div>
+          <div [ngClass]="{'positive': payment.paid_sum >= 0, 'negative': payment.paid_sum < 0}">
+            {{payment.paid_sum | money:true:true}}
+          </div>
+        </div>
+        <ng-template [ngIf]="paymentData.length === 0">
+          <div class="text-center py-16 mx-auto text-gray-400 text-lg">Платежи отсутствуют</div>
+        </ng-template>
+      </div>
+    </div>
+    <div class="mx-4 pt-2">
+      <button (click)="change()"
+              [disabled]="!selectedPayment"
+              class="rounded-xl py-2.5 w-full w-full text-white dialog-button bg-burger disabled:bg-gray-400">
+        Привязать
+      </button>
+    </div>
+  </ng-template>
+
+  <div class="rounded-full h-10 w-10 fill-gray-600 cursor-pointer flex items-center justify-center hover:bg-gray-100 absolute right-2 top-2 transition-all duration-300" (click)="closeDialog()">
+    <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px"><path d="M0 0h24v24H0z" fill="none"/><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+  </div>
+</div>

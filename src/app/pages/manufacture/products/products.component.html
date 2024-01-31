@@ -1,0 +1,169 @@
+<div #content class="h-screen w-full overflow-hidden pt-20 pb-4 lg:pb-8 px-4 lg:px-8 flex flex-col"
+     xmlns="http://www.w3.org/1999/html">
+
+  <h1 class="font-medium text-gray-700 text-2xl">Отгрузка заказов</h1>
+
+  <div class="grid grid-cols-8 lg:grid-cols-5 gap-x-2 lg:gap-x-8 w-full">
+    <div class=" col-span-7 lg:col-span-3 ">
+      <input class="w-full border-[1.5px] border-gray-300 rounded-2xl outline-none px-4 py-3 text-md"
+             [placeholder]="'Введите номер заказа'">
+    </div>
+    <div class="flex items-center lg:col-span-2 xl:col-span-1">
+<!--      <button class="w-full max-w-[200px] aspect-square lg:aspect-auto bg-blue-600 hover:bg-blue-500 text-white rounded-full shadow-lg lg:px-4 lg:py-2 text-sm flex items-center justify-center transition-all duration-300 ">-->
+<!--        <mat-icon class="lg:mr-3">add</mat-icon>-->
+<!--        <span class="hidden lg:block">Новая поставка</span>-->
+<!--      </button>-->
+    </div>
+  </div>
+
+  <div class="w-full
+              mt-4 lg:mt-8 px-2 lg:px-4 py-4 lg:pr-8
+              border-[1.5px] border-gray-300 rounded-t-3xl border-b-0
+              bg-gray-300
+              text-sm font-bold text-gray-600
+              hidden lg:grid lg:grid-cols-14 gap-x-2 lg:gap-x-4">
+    <div class="col-span-4 pl-16">Модель</div>
+    <div class="col-span-2">Статус</div>
+    <div class="col-span-2">Цвет</div>
+    <div class="col-span-2">Склад</div>
+    <div class="col-span-2">Штрих-код</div>
+    <div class="col-span-2">Номер и поставка</div>
+  </div>
+  <div class="flex-1 w-full
+              border-[1.5px] border-gray-300
+              rounded-b-3xl rounded-t-3xl lg:rounded-t-none
+              bg-white
+              shadow-lg
+              pb-5 px-2 lg:px-4 mt-4 lg:mt-0">
+    <cdk-virtual-scroll-viewport
+      itemSize="50"
+      class="h-full w-full">
+      <div *cdkVirtualFor="let item of entityDataSource; let last = last; let first = first"
+           class="w-full
+                  flex flex-col lg:grid lg:grid-cols-14 lg:gap-x-4
+                  py-4 lg:py-2 px-2 lg:px-0
+                  border-b cursor-pointer
+                  hover:bg-gray-100
+                  transition-all duration-200" (click)="change($event, ch, item)">
+        <div class="lg:hidden flex justify-between">
+          <div class="lg:text-xs text-gray-400">Поставка <span class="text-gray-600 font-bold">{{item.supply_id}}</span></div>
+          <div class="text-xs leading-tight px-2 py-1 rounded-lg "
+               [ngClass]="{
+               'bg-red-200 text-red-600': item.status === 'Отменен',
+               'bg-blue-200 text-blue-600': item.status === 'Новый',
+               'bg-amber-200 text-amber-600': item.status === 'В производстве',
+               'bg-cyan-200 text-cyan-600': item.status === 'Отгружен',
+               'bg-green-200 text-green-600': item.status === 'Доставляется',
+               }">
+            {{item.status}}
+          </div>
+        </div>
+        <div class="lg:col-span-4 flex items-center">
+          <mat-checkbox color="primary" #ch class=" mr-2 lg:mr-6"></mat-checkbox>
+          <div class="h-8 w-8 rounded-full overflow-hidden mr-4">
+            <ng-template [ngIf]="item.source === 'ozon'">
+              <img src="assets/icons/ozon_logo.png">
+            </ng-template>
+            <ng-template [ngIf]="item.source === 'wb'">
+              <img src="assets/icons/wb-logo.jpg">
+            </ng-template>
+            <ng-template [ngIf]="item.source === 'Клиент'">
+              <img class="rounded-full bg-violet-400 m-0.5" src="assets/icons/client_logo.png">
+            </ng-template>
+          </div>
+          <div class="flex flex-col">
+            <div>{{item.model}}</div>
+          </div>
+        </div>
+
+        <div class="col-span-2 hidden lg:flex items-center justify-start">
+          <div class="text-xs leading-tight px-2 py-1 rounded-lg "
+               [ngClass]="{
+               'bg-red-200 text-red-600': item.status === 'Отменен',
+               'bg-blue-200 text-blue-600': item.status === 'Новый',
+               'bg-amber-200 text-amber-600': item.status === 'В производстве',
+               'bg-cyan-200 text-cyan-600': item.status === 'Отгружен',
+               'bg-green-200 text-green-600': item.status === 'Доставляется',
+               }">
+            {{item.status}}
+          </div>
+        </div>
+
+        <div class="ml-2.5 lg:ml-0 mt-2 lg:mt-0 lg:col-span-2 flex items-center">
+          <div class="h-4 w-4 rounded-full mr-2" style="background: {{item.color_code}}"></div>
+          <div>{{item.color_name}}</div>
+        </div>
+        <div class="ml-2.5 lg:ml-0 mt-2 lg:mt-0 lg:col-span-2 flex items-center">
+          <span class="lg:hidden mr-1 text-gray-400">Склад:</span>{{item.warehouse}}
+        </div>
+        <div class="ml-2.5 lg:ml-0 mt-2 lg:mt-0 lg:col-span-2 flex items-center">
+          <span class="lg:hidden mr-1 text-gray-400">Штрих-код: </span>
+          {{item.ozon_posting_number
+          ? (item.ozon_posting_sticker ? 'Загружен' : '-')
+          : (item.wb_qr_code_parts ? item.wb_qr_code_parts : '')}}
+        </div>
+        <div class="ml-2.5 lg:ml-0 mt-2 lg:mt-0 lg:col-span-2 flex lg:flex-col lg:justify-center">
+          <span class="lg:hidden mr-1 text-gray-400">Отправление:</span>
+          <div>{{item.ozon_posting_number ? item.ozon_posting_number : item.wb_order_id}}</div>
+          <div class="lg:hidden text-xs text-gray-400">Поставка <span class="text-gray-600 font-bold">{{item.supply_id}}</span></div>
+        </div>
+
+<!--        <div class="flex items-center justify-between lg:hidden">-->
+<!--          <div class="flex flex-col items-start justify-center h-full">-->
+<!--            <div class="text-xs font-bold" [ngClass]="{'text-blue-600': item.source === 'ozon', 'text-fuchsia-600': item.source === 'wb'}">-->
+<!--              {{item.source}}-->
+<!--            </div>-->
+<!--            <div class="flex items-center">-->
+<!--              <mat-checkbox color="primary" #ch class="mr-3 -ml-3"></mat-checkbox>-->
+<!--              <div>{{item.model}}</div>-->
+<!--            </div>-->
+<!--          </div>-->
+<!--          <div class="text-xs leading-tight px-2 py-1 rounded-lg "-->
+<!--               [ngClass]="{-->
+<!--               'bg-red-200 text-red-600': item.status === 'Отменен',-->
+<!--               'bg-blue-200 text-blue-600': item.status === 'Новый',-->
+<!--               'bg-amber-200 text-amber-600': item.status === 'В производстве',-->
+<!--               'bg-cyan-200 text-cyan-600': item.status === 'Отгружен',-->
+<!--               'bg-green-200 text-green-600': item.status === 'Доставляется',-->
+<!--               }">-->
+<!--            {{item.status}}-->
+<!--          </div>-->
+<!--        </div>-->
+<!---->
+      </div>
+    </cdk-virtual-scroll-viewport>
+  </div>
+
+
+
+</div>
+<div class="fixed z-10 right-0 action-menu
+            h-16 px-4 lg:px-8 box-border
+            border-t-[1.5px] border-gray-300 bg-white
+            flex items-center justify-between transition-all duration-300"
+     style="width: {{content.clientWidth}}px;"
+     [ngClass]="{'-bottom-20': selectedItems.length === 0, 'bottom-0': selectedItems.length > 0}">
+  <div class="text-md text-gray-400">Выбрано: <span class="text-gray-600">{{selectedItems.length}}</span></div>
+  <div class="flex items-center space-x-4">
+    <button class="hidden lg:flex px-4 py-3 bg-blue-200 text-blue-600 rounded-3xl hover:bg-blue-100">
+      Обновить штрих-коды
+    </button>
+    <button class="lg:hidden h-10 w-10 rounded-full bg-blue-200 text-blue-600 flex items-center justify-center">
+      <mat-icon>refresh</mat-icon>
+    </button>
+    <button class="hidden lg:flex px-4 py-3 bg-blue-200 text-blue-600 rounded-3xl hover:bg-blue-100"
+            (click)="print()">
+      Печать штрих-кодов
+    </button>
+    <button class="lg:hidden h-10 w-10 rounded-full bg-blue-200 text-blue-600 flex items-center justify-center"
+            (click)="print(true)">
+      <mat-icon>print</mat-icon>
+    </button>
+    <button class="hidden lg:flex px-4 py-3 bg-amber-200 text-amber-600 rounded-3xl hover:bg-amber-100">
+      Готов к отгрузке
+    </button>
+    <button class="lg:hidden h-10 w-10 rounded-full bg-amber-200 text-amber-600 flex items-center justify-center">
+      <mat-icon>local_shipping</mat-icon>
+    </button>
+  </div>
+</div>

@@ -1,0 +1,15 @@
+<div class="flex flex-col bg-white w-full max-w-[650px] rounded-3xl">
+  <div class="px-4 py-3 bg-blue-300 text-blue-600 text-md">{{data.header}}</div>
+  <div class="px-4 py-3 ">{{data.message}}</div>
+  <div class="flex items-center justify-end space-x-4 my-3 px-4">
+    <button *ngFor="let button of data.buttons"
+            (click)="action(button)"
+            [ngClass]="{
+            'bg-blue-600 text-gray-50': button === 'confirm',
+            'bg-red-500 text-white': ['remove', 'cancel_confirm', 'unlink'].includes(button),
+            'text-blue-600 bg-blue-100': ['cancel', 'no'].includes(button),}"
+            class="rounded-lg px-3 py-2">
+      {{button | buttons}}
+    </button>
+  </div>
+</div>

@@ -1,0 +1,41 @@
+<div class="xl:bg-white rounded-3xl
+            flex flex-col
+            lg:border[1.5px] xl:border-gray-200 xl:shadow-lg
+            flex flex-col space-y-1.5
+            xl:py-5 xl:h-auto text-lg xl:text-sm overflow-hidden transition-all duration-300"
+     [ngClass]="{'h-8': !menuState, 'h-52': menuState}">
+  <div class="flex items-center space-x-4 px-5 xl:hidden cursor-pointer" (click)="menuState = !menuState">
+    <div>{{systemService.stockNavigationPage | stockNavigation}}</div>
+    <svg class="transition-all duration-300" [ngClass]="{'rotate-180': menuState}" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px"><path d="M0 0h24v24H0z" fill="none"/><path d="M16.59 8.59L12 13.17 7.41 8.59 6 10l6 6 6-6z"/></svg>
+  </div>
+  <div class="cursor-pointer hover:text-blue-400 px-5 border-l-2 transition-all duration-200"
+       [ngClass]="{'border-red-400': systemService.stockNavigationPage === 'stock', 'border-transparent': systemService.stockNavigationPage !== 'stock'}"
+       (click)="navigate('stock')">
+    Операции со складами
+  </div>
+  <div class="cursor-pointer hover:text-blue-400 px-5 border-l-2 transition-all duration-200"
+       [ngClass]="{'border-red-400': systemService.stockNavigationPage === 'warehouses', 'border-transparent': systemService.stockNavigationPage !== 'warehouses'}"
+       (click)="navigate('warehouses')">
+    Список складов
+  </div>
+  <div class="cursor-pointer hover:text-blue-400 px-5 border-l-2 transition-all duration-200"
+       [ngClass]="{'border-red-400': systemService.stockNavigationPage === 'counterparties', 'border-transparent': systemService.stockNavigationPage !== 'counterparties'}"
+       (click)="navigate('counterparties')">
+    Контрагенты
+  </div>
+  <div class="cursor-pointer hover:text-blue-400 px-5 border-l-2 transition-all duration-200"
+       [ngClass]="{'border-red-400': systemService.stockNavigationPage === 'goods', 'border-transparent': systemService.stockNavigationPage !== 'goods'}"
+       (click)="navigate('goods')">
+    Товары и категории
+  </div>
+  <div class="cursor-pointer hover:text-blue-400 px-5 border-l-2 transition-all duration-200"
+       [ngClass]="{'border-red-400': systemService.stockNavigationPage === 'techcard', 'border-transparent': systemService.stockNavigationPage !== 'techcard'}"
+       (click)="navigate('techcard')">
+    Техкарты
+  </div>
+  <div class="cursor-pointer hover:text-blue-400 px-5 border-l-2 transition-all duration-200"
+       [ngClass]="{'border-red-400': systemService.stockNavigationPage === 'tasks', 'border-transparent': systemService.stockNavigationPage !== 'tasks'}"
+       (click)="navigate('tasks')">
+    Задачи и типы
+  </div>
+</div>

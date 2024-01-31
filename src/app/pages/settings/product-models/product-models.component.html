@@ -1,0 +1,17 @@
+<div class="h-screen w-full overflow-hidden pt-20 pb-4 lg:pb-8 px-4 lg:px-8 flex flex-col">
+
+  <h1 class="font-medium text-gray-700 text-2xl">Модели</h1>
+
+  <div class="grid grid-cols-8 lg:grid-cols-5 gap-x-2 lg:gap-x-8 w-full">
+    <div class=" col-span-7 lg:col-span-3 ">
+      <input class="w-full border-[1.5px] border-gray-300 rounded-2xl outline-none px-4 py-3 text-md"
+             [placeholder]="'Введите название модели'">
+    </div>
+    <div class="flex items-center lg:col-span-2 xl:col-span-1">
+      <button class="w-full max-w-[200px] aspect-square lg:aspect-auto bg-blue-600 hover:bg-blue-500 text-white rounded-full shadow-lg lg:px-4 lg:py-2 text-sm flex items-center justify-center transition-all duration-300 ">
+        <mat-icon class="lg:mr-3">add</mat-icon>
+        <span class="hidden lg:block">Новая модель</span>
+      </button>
+    </div>
+  </div>
+</div>

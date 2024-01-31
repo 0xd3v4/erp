@@ -1,0 +1,133 @@
+<ng-template [ngIf]="type === 'acceptance'">
+  <div class="flex flex-col lg:grid lg:grid-cols-15 lg:gap-x-4 py-2 pr-[60px] lg:pr-0 relative"
+       style="border-bottom: 1px solid #b8b8b8 !important;">
+    <div class="col-span-6">
+      {{item.name}}
+    </div>
+    <div class="col-span-2 flex items-center lg:justify-end w-full overflow-hidden lg:text-right">
+      <!--    <input class="bg-blue-200" [formControl]="quantityControl">-->
+      <span class="lg:hidden text-gray-400">Количество: </span>
+      <span class="px-2 outline-gray-200"
+            #quantityField
+            [contentEditable]="true"
+            (keydown)="onInputStartEvent($event, 'quantity')"
+            (keyup)="onInputEndEvent($event, 'quantity')"
+            (focusout)="focusEvent($event, 'quantity')">
+      1
+    </span>
+      <span>{{item.units_name}}</span>
+    </div>
+    <div class="col-span-2 flex items-center lg:justify-end text-right -mr-2">
+      <span class="lg:hidden text-gray-400">Цена: </span>
+      <span class="px-2 outline-gray-200"
+            #priceField
+            [contentEditable]="true"
+            (keydown)="onInputStartEvent($event, 'price')"
+            (keyup)="onInputEndEvent($event, 'price')"
+            (focusout)="focusEvent($event, 'price')"
+            (focusin)="focusIn($event)">
+      100
+    </span>
+      <!--    <span class="">₽</span>-->
+    </div>
+    <div class="col-span-2 flex items-center lg:justify-end space-x-2 cursor-pointer lg:text-right -mr-2"
+         [matMenuTriggerFor]="menu">
+      <span class="lg:hidden text-gray-400 mr-2">НДС: </span>
+      {{vat == 0 ? 'Без НДС' : '20 %'}}
+      <svg xmlns="http://www.w3.org/2000/svg" height="22px" viewBox="0 0 24 24" width="22px"><path d="M0 0h24v24H0z" fill="none"/><path d="M16.59 8.59L12 13.17 7.41 8.59 6 10l6 6 6-6z"/></svg>
+    </div>
+    <mat-menu #menu="matMenu" >
+      <button mat-menu-item (click)="setVat(0)">Без НДС</button>
+      <button mat-menu-item (click)="setVat(0.2)">20 %</button>
+    </mat-menu>
+    <div class="col-span-2 lg:text-right">
+      <span class="lg:hidden text-gray-400">Стоимость: </span>
+      {{(quantity * price + (quantity * price * vat)).toLocaleString('ru-RU')}}
+      <!--    <span class="">₽</span>-->
+    </div>
+    <div class="absolute lg:relative right-0 top-1/2 -translate-y-1/2 lg:flex justify-end">
+      <svg (click)="removeItem()" class="fill-red-400 hover:fill-red-600 cursor-pointer transition-all duration-300" xmlns="http://www.w3.org/2000/svg" height="22px" viewBox="0 0 24 24" width="22px" ><path d="M0 0h24v24H0z" fill="none"/><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>
+    </div>
+  </div>
+</ng-template>
+<ng-template [ngIf]="type === 'capitalization'">
+  <div class="flex flex-col lg:grid lg:grid-cols-14 lg:gap-x-4 py-2 pr-[60px] lg:pr-0 relative"
+       style="border-bottom: 1px solid #b8b8b8 !important;">
+    <div class="col-span-6">
+      {{item.name}}
+    </div>
+    <div class="col-span-2 flex items-center lg:justify-end w-full overflow-hidden lg:text-right">
+      <!--    <input class="bg-blue-200" [formControl]="quantityControl">-->
+      <span class="lg:hidden text-gray-400">Количество: </span>
+      <span class="px-2 outline-gray-200"
+            #quantityField
+            [contentEditable]="true"
+            (keydown)="onInputStartEvent($event, 'quantity')"
+            (keyup)="onInputEndEvent($event, 'quantity')"
+            (focusout)="focusEvent($event, 'quantity')">
+      1
+    </span>
+      <span>{{item.units_name}}</span>
+    </div>
+    <div class="col-span-2 flex items-center lg:justify-end text-right -mr-2">
+      <span class="lg:hidden text-gray-400">Цена: </span>
+      <span class="px-2 outline-gray-200"
+            #priceField
+            [contentEditable]="true"
+            (keydown)="onInputStartEvent($event, 'price')"
+            (keyup)="onInputEndEvent($event, 'price')"
+            (focusout)="focusEvent($event, 'price')"
+            (focusin)="focusIn($event)">
+      100
+    </span>
+      <!--    <span class="">₽</span>-->
+    </div>
+    <div class="col-span-2 lg:text-right">
+      <span class="lg:hidden text-gray-400">Стоимость: </span>
+      {{(quantity * price + (quantity * price * vat)) | money:true:false}}
+      <!--    <span class="">₽</span>-->
+    </div>
+    <div class="absolute lg:relative col-span-2 right-0 top-1/2 -translate-y-1/2 lg:flex justify-end">
+      <svg (click)="removeItem()" class="fill-red-400 hover:fill-red-600 cursor-pointer transition-all duration-300" xmlns="http://www.w3.org/2000/svg" height="22px" viewBox="0 0 24 24" width="22px" ><path d="M0 0h24v24H0z" fill="none"/><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>
+    </div>
+  </div>
+</ng-template>
+<ng-template [ngIf]="type === 'write-off'">
+  <div class="flex flex-col lg:grid lg:grid-cols-6 lg:gap-x-4 py-2 pr-[60px] lg:pr-0 relative"
+       style="border-bottom: 1px solid #b8b8b8 !important;">
+    <div class="col-span-2">
+      {{item.name}}
+    </div>
+    <div class="col-span-1 flex items-center lg:justify-end w-full overflow-hidden lg:text-right">
+      <!--    <input class="bg-blue-200" [formControl]="quantityControl">-->
+      <span class="lg:hidden text-gray-400">Количество: </span>
+      <span class="px-2 outline-gray-200"
+            #quantityField
+            [contentEditable]="true"
+            (keydown)="onInputStartEvent($event, 'quantity')"
+            (keyup)="onInputEndEvent($event, 'quantity')"
+            (focusout)="focusEvent($event, 'quantity')">
+        1
+      </span>
+      <span>из {{item.total_quantity}}</span>
+      <span class="ml-1">{{item.units_name}}</span>
+    </div>
+    <div class="col-span-1 flex items-center lg:justify-end text-right -mr-2">
+      <span class="lg:hidden text-gray-400">Цена: </span>
+      <span class="px-2 outline-gray-200"
+            #priceField
+            [contentEditable]="false">
+      {{(((item.total_price || 0) / (item.total_quantity || 1)) | number:'1.2-2') || '' | money:false:false}}
+    </span>
+      <!--    <span class="">₽</span>-->
+    </div>
+    <div class="col-span-1 lg:text-right">
+      <span class="lg:hidden text-gray-400">Стоимость: </span>
+      {{((quantity * price + (quantity * price * vat)) | number:'1.2-2') || '' | money:false:false}}
+      <!--    <span class="">₽</span>-->
+    </div>
+    <div class="absolute lg:relative col-span-1 right-0 top-1/2 -translate-y-1/2 lg:flex justify-end">
+      <svg (click)="removeItem()" class="fill-red-400 hover:fill-red-600 cursor-pointer transition-all duration-300" xmlns="http://www.w3.org/2000/svg" height="22px" viewBox="0 0 24 24" width="22px" ><path d="M0 0h24v24H0z" fill="none"/><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>
+    </div>
+  </div>
+</ng-template>

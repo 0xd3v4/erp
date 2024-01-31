@@ -1,0 +1,25 @@
+<div class="flex flex-col xl:flex-row min-h-screen pt-12 lg:px-8 xl:px-12 lg:space-x-4">
+  <app-side-navigation></app-side-navigation>
+  <div class="md:flex-1 grid grid-cols-1 gap-x-0 gap-y-4 md:grid-cols-3 md:gap-x-8 md:gap-y-0">
+    <div *ngFor="let common of warehousesData" class="flex flex-col px-5 md:px-0">
+      <div class="flex items-center space-x-4 text-md p-0 md:p-1">
+        <div>{{common.name}}</div>
+        <div (click)="createWarehouse(common)" class="h-6 w-6 rounded-full fill-blue-600 bg-blue-200 hover:bg-blue-300 flex items-center justify-center cursor-pointer transition-all duration-300 shadow-sm">
+          <svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 0 24 24" width="20px"><path d="M0 0h24v24H0z" fill="none"/><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
+        </div>
+      </div>
+      <div class="bg-white rounded-xl border-[1.5px] border-gray-200 shadow-lg w-full mt-1 flex flex-col overflow-hidden">
+        <div *ngIf="common.goodsWarehouses.length > 0; else noItems" class="border-b-[1.5px] border-gray-200 px-4 py-2 text-sm font-bold text-gray-400 ">Название склада</div>
+        <ng-template #noItems>
+          <div class="mx-auto py-6 text-sm text-gray-600">Нет складов</div>
+        </ng-template>
+        <div *ngFor="let warehouse of common.goodsWarehouses; let first = first"
+             class="hover:bg-gray-200 px-4 py-2 text-sm text-gray-600 cursor-pointer transition-all duration-200 overflow-hidden"
+             style="overflow-wrap: anywhere;"
+             [ngClass]="{'border-t-[1.5px] border-gray-200': !first}" (click)="patchWarehouse(warehouse, common)">
+          {{warehouse.name}}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

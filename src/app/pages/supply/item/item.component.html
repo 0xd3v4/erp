@@ -1,0 +1,382 @@
+<div class="h-screen w-full  pb-4 lg:pb-8 px-4 lg:px-8 flex flex-col"
+     [ngClass]="{'pt-20': systemService.currentState, 'pt-2 lg:pt-8': !systemService.currentState}">
+
+  <div *ngIf="item"
+       class="flex flex-col lg:flex-row items-start lg:items-center"
+       [ngClass]="{'ml-16': systemService.uiStyle === 'classic', 'mt-14 lg:mt-6': systemService.oddNavigation}">
+    <h1 class="font-medium text-gray-700 lg:text-2xl   flex items-center"
+        [ngClass]="{
+                '-ml-2 lg:ml-0': systemService.currentState,
+                'ml-0 lg:ml-4': !systemService.currentState,
+                'text-lg mt-0.5': systemService.uiStyle === 'classic',
+                'text-xl': systemService.uiStyle === 'modern',
+        }">
+      <button *ngIf="systemService.currentState" mat-icon-button class="mr-4" [routerLink]="'/supply'">
+        <mat-icon>arrow_back</mat-icon>
+      </button>
+      Данные отгрузки {{item.type === 2 ? ( item.label | datetime:'DD.MM.YYYY, HH:mm' ) : item.id}}
+    </h1>
+    <div class="-mt-3 mb-2 lg:ml-4 px-3 py-1 text-xs lg:text-sm rounded-lg"
+         [ngClass]="{'bg-green-300 text-emerald-700': item.closed, 'bg-blue-200 text-blue-600': !item.closed}">
+      {{item.closed ? 'Отгружен' : 'Новый'}}
+    </div>
+  </div>
+
+  <ng-template [ngIf]="item">
+    <div class="text-md lg:text-xl text-gray-400 lg:ml-4">Создано: <span class="text-gray-600">{{item.created_at | datetime:'DD MMM YYYY'}}</span></div>
+    <div class="text-md lg:text-xl text-gray-400 lg:ml-4">Склад: <span class="text-gray-600">{{item.warehouse}}</span></div>
+    <div class="text-md lg:text-xl text-gray-400 lg:ml-4">Собрано товаров: <span *ngIf="item.items" class="text-gray-600">{{realItems.length}} (ожидается {{item.items.length}})</span></div>
+  </ng-template>
+
+
+  <ng-template [ngIf]="item">
+
+    <div *ngIf="item.ozon_supply_id; else createAct"
+         class="flex flex-col items-start space-y-2 lg:space-y-4 lg:p-4">
+      <h2 class="font-medium text-gray-700 text-lg lg:text-xl mt-2 mb-0  flex items-center">
+        Распечатать
+      </h2>
+      <div class="grid grid-cols-4 lg:flex lg:space-x-4 gap-x-4 w-full">
+        <div class="flex flex-col items-center justify-center">
+          <button class="text-md lg:text-lg
+                         w-12 h-12 lg:h-auto lg:w-auto
+                         lg:px-4 lg:py-3
+                         rounded-full lg:rounded-lg shadow-sm
+                         bg-blue-200 text-blue-500
+                         flex items-center justify-center
+                         disabled:bg-gray-400 disabled:text-gray-200"
+                  [disabled]="realItems.length === 0"
+                  (click)="printStickers()">
+            <mat-icon class="lg:mr-2">style</mat-icon>
+            <span class="hidden lg:block">Наклейки</span>
+          </button>
+          <div class="mt-1 lg:mt-0 lg:hidden">Наклейки</div>
+        </div>
+        <div class="flex flex-col items-center justify-center">
+          <button class="text-md lg:text-lg w-12 h-12 lg:h-auto lg:w-auto lg:px-4 lg:py-3 rounded-full lg:rounded-lg bg-blue-200 text-blue-500 shadow-sm flex items-center justify-center"
+                  (click)="printQr()">
+            <mat-icon class="lg:mr-2">qr_code</mat-icon>
+            <span class="hidden lg:block">Штрих-код</span>
+          </button>
+          <div class="mt-1 lg:mt-0 lg:hidden">Штрих-код</div>
+        </div>
+        <div class="flex flex-col items-center justify-center">
+          <button class="text-md lg:text-lg w-12 h-12 lg:h-auto lg:w-auto lg:px-4 lg:py-3 rounded-full lg:rounded-lg bg-blue-200 text-blue-500 shadow-sm flex items-center justify-center"
+                  (click)="printAct()">
+            <mat-icon class="lg:mr-2">print</mat-icon>
+            <span class="hidden lg:block">Aкт приёма-передачи</span>
+          </button>
+          <div class="mt-1 lg:mt-0 lg:hidden">Акт</div>
+        </div>
+        <div class="flex flex-col items-center justify-center">
+          <button *ngIf="!item.closed"
+                  class="text-md lg:text-lg w-12 h-12 lg:h-auto lg:w-auto lg:px-4 lg:py-3 rounded-full lg:rounded-lg bg-amber-200 text-amber-700 shadow-sm flex items-center justify-center"
+                  (click)="closeManually()">
+            <mat-icon class="lg:mr-2">edit_note</mat-icon>
+            <span class="hidden lg:block">Отгрузить</span>
+          </button>
+          <div class="mt-1 lg:mt-0 lg:hidden">Отгрузить</div>
+        </div>
+      </div>
+<!--      <button class="text-md lg:text-lg w-full lg:w-auto px-4 py-3 rounded-lg bg-blue-200 text-blue-500 shadow-sm flex items-center justify-center" (click)="printAct()">-->
+<!--        <mat-icon class="mr-2">print</mat-icon>-->
+<!--        Распечатать акт приёма-передачи</button>-->
+<!--      <button class="text-md lg:text-lg w-full lg:w-auto px-4 py-3 rounded-lg bg-blue-200 text-blue-500 shadow-sm flex items-center justify-center" (click)="printQr()">-->
+<!--        <mat-icon class="mr-2">qr_code</mat-icon>-->
+<!--        Распечатать штрих-код</button>-->
+      <button *ngIf="!item.closed && false"
+              class="text-lg px-4 py-3 rounded-lg bg-amber-200 text-amber-700 shadow-sm flex items-center justify-center"
+              (click)="closeManually()">
+        <mat-icon class="mr-2">edit_note</mat-icon>
+        Отгрузить
+      </button>
+      <!--    <button class="text-lg px-4 py-3 rounded-lg bg-green-200 text-green-700 shadow-sm flex items-center">-->
+      <!--      <mat-icon class="mr-2">local_shipping</mat-icon>-->
+      <!--      Отгрузить</button>-->
+    </div>
+    <ng-template #createAct>
+      <div class="py-4 lg:p-4 flex flex-col lg:flex-row lg:space-x-4 space-y-4 lg:space-y-0">
+        <button class="text-lg px-4 py-3 rounded-lg bg-blue-200 text-blue-500 shadow-sm flex items-center justify-center disabled:bg-gray-400 disabled:text-gray-200"
+                (click)="printStickers()"
+                [disabled]="realItems.length === 0">
+          <mat-icon class="mr-2">style</mat-icon>
+          Распечатать наклейки
+        </button>
+        <button class="text-lg px-4 py-3 rounded-lg bg-violet-200 text-violet-700 shadow-sm flex items-center justify-center"
+                (click)="createActRequest()">
+          <mat-icon class="mr-2">edit_note</mat-icon>
+          Собрать отправление</button>
+        <button *ngIf="!item.closed"
+                class="text-lg px-4 py-3 rounded-lg bg-amber-200 text-amber-700 shadow-sm flex items-center justify-center"
+                (click)="closeManually()">
+          <mat-icon class="mr-2">edit_note</mat-icon>
+          Отгрузить</button>
+      </div>
+    </ng-template>
+  </ng-template>
+
+  <div *ngIf="item" class="flex items-center lg:mx-4 lg:mt-4 space-x-2 mt-4 text-gray-600">
+    <button class="no-select px-4 py-2 rounded-full text-md transition-all duration-300"
+            [ngClass]="{'bg-blue-200': selectedTab === 'real', 'bg-transparent hover:bg-gray-200': selectedTab === 'expected'}"
+            (click)="selectedTab = 'real'">
+      Отправления
+    </button>
+    <button class="no-select px-4 py-2 rounded-full text-md transition-all duration-300 "
+            [ngClass]="{'bg-transparent hover:bg-gray-200': selectedTab === 'real', 'bg-blue-200': selectedTab === 'expected'}"
+            (click)="selectedTab = 'expected'">
+      {{item.closed ? 'Ожидалось' : 'Ожидается'}}
+    </button>
+  </div>
+  <ng-template [ngIf]="item && selectedTab === 'real'">
+<!--    <h2 *ngIf="item" class="font-medium text-gray-700 text-lg lg:text-xl mt-2 lg:mt-6 lg:ml-4 flex items-center">-->
+<!--      Отправления-->
+<!--      <div *ngIf="item.items" class="text-xs text-gray-400 mb-3 ml-2">{{item.items.length}}</div>-->
+<!--    </h2>-->
+
+    <ng-template [ngIf]="!item.closed">
+      <input class="lg:ml-4 mt-4 border-[1.5px] border-gray-300 rounded-2xl outline-none px-4 py-3 text-md"
+             [placeholder]="'Введите номер отправления или заказа'"
+             [formControl]="ozonSearchForm"
+             [matAutocomplete]="auto">
+      <mat-autocomplete #auto="matAutocomplete" (optionSelected)="addItem($event)">
+        <mat-option *ngFor="let item of searchItems$ | async"
+                    [value]="item"
+                    class="flex flex-col py-1 border-t-[1.5px]">
+          <div class="text-md text-gray-800">{{item.ozon_posting_number}}</div>
+          <div class="text-md text-gray-400">{{item.model_name}}</div>
+        </mat-option>
+      </mat-autocomplete>
+    </ng-template>
+
+    <div *ngIf="realItems.length === 0; else real" class="flex-1 flex items-center justify-center p-4 text-center text-gray-400 box-border">
+      <div class="text-xl">Вы не добавили ни одного товара в поставку</div>
+    </div>
+    <ng-template #real>
+      <div class="flex-1 w-full
+              border-[1.5px] border-gray-300
+              rounded-3xl
+              bg-white
+              shadow-lg
+              pb-5 px-2 lg:mx-4 lg:px-4 mt-4">
+        <div *ngFor="let posting of realItems; let last = last; let first = first"
+             class="w-full
+                  flex flex-col lg:grid lg:grid-cols-8 lg:gap-x-4
+                  py-2 lg:py-3 px-2 lg:px-0
+                  cursor-pointer hover:bg-gray-100
+                  transition-all duration-200" [ngClass]="{'border-b': !last}">
+
+          <div class="col-span-3 hidden lg:flex flex-col">
+            <div class="text-md">{{posting.model_name}}</div>
+            <div class="text-sm">
+              Отгрузка: {{posting.shipping_date  | datetime:'DD MMM YYYY'}},
+              <span class="text-gray-400">{{posting.shipping_date  | datetime:'HH:mm'}}</span>
+            </div>
+          </div>
+          <div class="col-span-2 hidden lg:flex flex-col items-start">
+            <div class="text-sm">{{posting.ozon_posting_number}}</div>
+            <div class="text-md px-2 py-1 rounded-lg text-sm"
+                 [ngClass]="{
+               'bg-green-200 text-green-600': ['delivering', 'delivered', 'done'].includes(posting.ozon_status),
+               'bg-amber-200 text-amber-600': posting.ozon_status === 'awaiting_packaging',
+                'bg-blue-200 text-blue-600': posting.ozon_status === 'awaiting_deliver',
+                'bg-red-200 text-red-600': ['not_accepted', 'cancelled'].includes(posting.ozon_status)}">
+              {{posting.status_name}}
+            </div>
+          </div>
+          <div class="col-span-2 hidden lg:flex flex-col">
+            <div class="flex items-center">
+              <div class="h-4 w-4 rounded-full mr-2" style="background: {{posting.color_code}}"></div>
+              <div>{{posting.color_name}}</div>
+            </div>
+            <div class="text-sm text-gray-400 pl-6">{{posting.fabrics_name}}</div>
+          </div>
+          <div class="hidden lg:flex justify-end">
+                      <button *ngIf="!item.closed"
+                              class="h-9 w-9 bg-red-100 text-red-400 rounded-full flex items-center justify-center"
+                              (click)="removeFromReal(posting)">
+                        <mat-icon class="scale-90">delete</mat-icon>
+                      </button>
+            <button *ngIf="posting.ozon_status === 'not_accepted' && !['delivering', 'delivered'].includes(posting.ozon_status)"
+                    class="h-9 w-9 bg-blue-100 text-blue-400 rounded-full flex items-center justify-center"
+                    (click)="returnToDelivery(posting)">
+              <mat-icon class="scale-90">loop</mat-icon>
+            </button>
+            <button *ngIf="posting.ozon_status === 'awaiting_packaging'"
+                    class="h-9 w-9 bg-blue-100 text-blue-400 rounded-full flex items-center justify-center"
+                    (click)="sendToPacking(posting)">
+              <mat-icon class="scale-90">inventory</mat-icon>
+            </button>
+          </div>
+
+          <!--        МОБИЛЬНОЕ ИСПОЛНЕНИЕ-->
+          <div class="flex lg:hidden items-center justify-between">
+            <div class="text-xs">{{posting.ozon_posting_number}}</div>
+<!--            <div class="px-2 py-1 rounded-lg text-xs"-->
+<!--                 [ngClass]="{-->
+<!--               'bg-green-200 text-green-600': ['delivering', 'delivered', 'done'].includes(posting.ozon_status),-->
+<!--               'bg-amber-200 text-amber-600': posting.ozon_status === 'awaiting_packaging',-->
+<!--                'bg-blue-200 text-blue-600': posting.ozon_status === 'awaiting_deliver',-->
+<!--                'bg-red-200 text-red-600': ['not_accepted', 'cancelled'].includes(posting.ozon_status)}">-->
+<!--              {{posting.ozon_status | ozonStatus}}-->
+<!--            </div>-->
+            <div class="px-2 py-1 rounded-lg text-xs"
+                 [ngClass]="{
+               'bg-green-200 text-green-600': ['delivering', 'delivered', 'done'].includes(posting.ozon_status),
+               'bg-amber-200 text-amber-600': posting.ozon_status === 'awaiting_packaging',
+                'bg-blue-200 text-blue-600': posting.ozon_status === 'awaiting_deliver',
+                'bg-red-200 text-red-600': ['not_accepted', 'cancelled'].includes(posting.ozon_status)}">
+              {{posting.status_name}}
+            </div>
+          </div>
+          <div class="lg:hidden text-md mt-0.5">{{posting.model_name}}</div>
+          <div class="flex lg:hidden items-center mt-0.5">
+            <div class="flex items-center">
+              <div class="h-4 w-4 rounded-full mr-2" style="background: {{posting.color_code}}"></div>
+              <div>{{posting.color_name}}</div>
+            </div>
+            <div class="text-sm text-gray-400 pl-2">{{posting.fabrics_name}}</div>
+          </div>
+          <div class="lg:hidden text-xs mt-0.5">
+            Создан {{posting.created_at  | datetime:'DD MMM YYYY'}},
+            <span class="text-gray-400">{{posting.created_at  | datetime:'HH:mm'}}</span>
+          </div>
+          <div class="flex lg:hidden items-center justify-start">
+            <!--          <button *ngIf="posting.ozon_status !== 'not_accepted' && !['delivering', 'delivered'].includes(posting.ozon_status)"-->
+            <!--                  class="text-sm px-2 py-1 bg-red-100 text-red-400 rounded-lg flex items-center"-->
+            <!--                  (click)="removeItem(posting)">-->
+            <!--            <mat-icon class="mr-2 scale-90">block</mat-icon>-->
+            <!--            Удалить отправление-->
+            <!--          </button>-->
+            <button *ngIf="!item.closed"
+                    class="h-9 w-9 bg-red-100 text-red-400 rounded-full flex items-center justify-center"
+                    (click)="removeFromReal(posting)">
+              <mat-icon class="scale-90">delete</mat-icon>
+            </button>
+            <button *ngIf="posting.ozon_status === 'not_accepted' && !['delivering', 'delivered'].includes(posting.ozon_status)"
+                    class="mt-1 text-sm px-2 py-1 bg-blue-100 text-blue-400 rounded-lg flex items-center"
+                    (click)="returnToDelivery(posting)">
+              <mat-icon class="mr-2 scale-90">loop</mat-icon>
+              Вернуть в доставку
+            </button>
+            <button *ngIf="posting.ozon_status === 'awaiting_packaging'"
+                    class="mt-1 text-sm px-2 py-1 bg-blue-100 text-blue-400 rounded-lg flex items-center"
+                    (click)="sendToPacking(posting)">
+              <mat-icon class="mr-2 scale-90">inventory</mat-icon>
+              Готово к отгрузке
+            </button>
+          </div>
+        </div>
+      </div>
+    </ng-template>
+  </ng-template>
+  <ng-template [ngIf]="item && selectedTab === 'expected'">
+    <div  *ngIf="item"
+          class="flex-1 w-full
+              border-[1.5px] border-gray-300
+              rounded-3xl
+              bg-white
+              shadow-lg
+              pb-5 px-2 lg:mx-4 lg:px-4 mt-4">
+      <cdk-virtual-scroll-viewport
+        itemSize="50"
+        class="h-full w-full">
+        <div *cdkVirtualFor="let posting of item.items; let last = last; let first = first"
+             class="w-full
+                  flex flex-col lg:grid lg:grid-cols-8 lg:gap-x-4
+                  py-2 lg:py-3 px-2 lg:px-0
+                  border-b cursor-pointer
+                  hover:bg-gray-100
+                  transition-all duration-200">
+
+          <div class="col-span-3 hidden lg:flex flex-col">
+            <div class="text-md">{{posting.model_name}}</div>
+            <div class="text-sm">
+              Отгрузка: {{posting.shipping_date  | datetime:'DD MMM YYYY'}},
+              <span class="text-gray-400">{{posting.shipping_date  | datetime:'HH:mm'}}</span>
+            </div>
+          </div>
+          <div class="col-span-2 hidden lg:flex flex-col items-start">
+            <div class="text-sm">{{posting.ozon_posting_number}}</div>
+            <div class="text-md px-2 py-1 rounded-lg text-sm"
+                 [ngClass]="{
+               'bg-green-200 text-green-600': ['delivering', 'delivered', 'done'].includes(posting.ozon_status),
+               'bg-amber-200 text-amber-600': posting.ozon_status === 'awaiting_packaging',
+                'bg-blue-200 text-blue-600': posting.ozon_status === 'awaiting_deliver',
+                'bg-red-200 text-red-600': ['not_accepted', 'cancelled'].includes(posting.ozon_status)}">
+              {{posting.status_name}}
+            </div>
+          </div>
+          <div class="col-span-2 hidden lg:flex flex-col">
+            <div class="flex items-center">
+              <div class="h-4 w-4 rounded-full mr-2" style="background: {{posting.color_code}}"></div>
+              <div>{{posting.color_name}}</div>
+            </div>
+            <div class="text-sm text-gray-400 pl-6">{{posting.fabrics_name}}</div>
+          </div>
+          <div class="hidden lg:flex justify-end">
+            <!--          <button *ngIf="posting.ozon_status !== 'not_accepted' && !['delivering', 'delivered'].includes(posting.ozon_status)"-->
+            <!--                  class="h-9 w-9 bg-red-100 text-red-400 rounded-full flex items-center justify-center"-->
+            <!--                  (click)="removeItem(posting)">-->
+            <!--            <mat-icon class="scale-90">block</mat-icon>-->
+            <!--          </button>-->
+            <button *ngIf="posting.ozon_status === 'not_accepted' && !['delivering', 'delivered'].includes(posting.ozon_status)"
+                    class="h-9 w-9 bg-blue-100 text-blue-400 rounded-full flex items-center justify-center"
+                    (click)="returnToDelivery(posting)">
+              <mat-icon class="scale-90">loop</mat-icon>
+            </button>
+            <button *ngIf="posting.ozon_status === 'awaiting_packaging'"
+                    class="h-9 w-9 bg-blue-100 text-blue-400 rounded-full flex items-center justify-center"
+                    (click)="sendToPacking(posting)">
+              <mat-icon class="scale-90">inventory</mat-icon>
+            </button>
+          </div>
+
+          <!--        МОБИЛЬНОЕ ИСПОЛНЕНИЕ-->
+          <div class="flex lg:hidden items-center justify-between">
+            <div class="text-xs">{{posting.ozon_posting_number}}</div>
+            <div class="px-2 py-1 rounded-lg text-xs"
+                 [ngClass]="{
+               'bg-green-200 text-green-600': ['delivering', 'delivered', 'done'].includes(posting.ozon_status),
+               'bg-amber-200 text-amber-600': posting.ozon_status === 'awaiting_packaging',
+                'bg-blue-200 text-blue-600': posting.ozon_status === 'awaiting_deliver',
+                'bg-red-200 text-red-600': ['not_accepted', 'cancelled'].includes(posting.ozon_status)}">
+              {{posting.status_name}}
+            </div>
+          </div>
+          <div class="lg:hidden text-md mt-0.5">{{posting.model_name}}</div>
+          <div class="flex lg:hidden items-center mt-0.5">
+            <div class="flex items-center">
+              <div class="h-4 w-4 rounded-full mr-2" style="background: {{posting.color_code}}"></div>
+              <div>{{posting.color_name}}</div>
+            </div>
+            <div class="text-sm text-gray-400 pl-2">{{posting.fabrics_name}}</div>
+          </div>
+          <div class="lg:hidden text-xs mt-0.5">
+            Создан {{posting.created_at  | datetime:'DD MMM YYYY'}},
+            <span class="text-gray-400">{{posting.created_at  | datetime:'HH:mm'}}</span>
+          </div>
+          <div class="flex lg:hidden items-center justify-center">
+            <!--          <button *ngIf="posting.ozon_status !== 'not_accepted' && !['delivering', 'delivered'].includes(posting.ozon_status)"-->
+            <!--                  class="text-sm px-2 py-1 bg-red-100 text-red-400 rounded-lg flex items-center"-->
+            <!--                  (click)="removeItem(posting)">-->
+            <!--            <mat-icon class="mr-2 scale-90">block</mat-icon>-->
+            <!--            Удалить отправление-->
+            <!--          </button>-->
+            <button *ngIf="posting.ozon_status === 'not_accepted' && !['delivering', 'delivered'].includes(posting.ozon_status)"
+                    class="mt-1 text-sm px-2 py-1 bg-blue-100 text-blue-400 rounded-lg flex items-center"
+                    (click)="returnToDelivery(posting)">
+              <mat-icon class="mr-2 scale-90">loop</mat-icon>
+              Вернуть в доставку
+            </button>
+            <button *ngIf="posting.ozon_status === 'awaiting_packaging'"
+                    class="mt-1 text-sm px-2 py-1 bg-blue-100 text-blue-400 rounded-lg flex items-center"
+                    (click)="sendToPacking(posting)">
+              <mat-icon class="mr-2 scale-90">inventory</mat-icon>
+              Готово к отгрузке
+            </button>
+          </div>
+        </div>
+      </cdk-virtual-scroll-viewport>
+    </div>
+  </ng-template>
+</div>

@@ -1,0 +1,53 @@
+<div class="fixed w-screen h-screen left-0 top-0 z-50 flex">
+  <div class="h-screen w-screen lg:w-1/2 relative">
+
+    <div class="p-4 lg:p-8
+                bg-white rounded-3xl border-[1.5px] shadow-xl
+                absolute top-1/2 left-1/2
+                -translate-x-1/2 -translate-y-1/2
+                w-screen max-w-[450px]
+                flex flex-col">
+      <div class="text-3xl w-full text-center">ALDERSON</div>
+      <div class="text-sm text-gray-400 mt-4 w-full text-center">введите свои учтные данные для входа</div>
+
+      <form class="flex flex-col mt-4">
+        <div class="text-sm text-gray-400 mt-4 px-2">введите логин</div>
+        <input class="w-full border-[1.5px] border-gray-300 rounded-xl outline-none px-4 py-3 text-md mt-1"
+               type="email"
+               [placeholder]="'логин'">
+        <div class="text-sm text-gray-400 mt-4 px-2">введите пароль</div>
+        <input class="w-full border-[1.5px] border-gray-300 rounded-xl outline-none px-4 py-3 text-md mt-1"
+               type="password"
+               [placeholder]="'пароль'">
+      </form>
+
+
+      <button class="w-full mt-8 py-4 flex justify-center bg-blue-200 text-blue-600 text-md rounded-xl">
+        Войти
+      </button>
+    </div>
+
+  </div>
+  <div class="hidden lg:flex lg:h-screen lg:w-1/2 bg-blue-900 relative">
+
+    <div class="context">
+      <h1>Войти в систему управления</h1>
+    </div>
+
+
+    <div class="area" >
+      <ul class="circles">
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+      </ul>
+    </div >
+  </div>
+</div>

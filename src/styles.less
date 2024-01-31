@@ -1,1 +1,192 @@
 /* You can add global styles to this file, and also import other style files */
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html, body { height: 100%; }
+body { margin: 0; font-family: 'Montserrat', sans-serif; background: #f4f4f4 !important; }
+
+.menu-icon {
+  font-size: 18px !important;
+  height: 18px !important;
+  width: 18px !important;
+}
+.mdc-switch__icon {
+  display: none !important;
+}
+.mat-mdc-slide-toggle .mdc-switch.mdc-switch--selected:enabled .mdc-switch__handle::after {
+  background-color: rgb(37 99 235) !important;
+}
+.mat-mdc-slide-toggle .mdc-switch:enabled .mdc-switch__track::after {
+  background: rgba(37, 99, 235, .4) !important;
+}
+.mat-mdc-dialog-container .mdc-dialog__surface {
+  border-radius: 1.5rem !important;
+}
+.mat-bottom-sheet-container {
+  border-radius: 1.5rem 1.5rem 0 0 !important;
+}
+.mat-typography {
+  letter-spacing: 0 !important;
+}
+.input-field {
+  min-height: 55px !important;
+  padding: 9px 15px !important;
+}
+.input-field .mat-mdc-select-value-text, .input-field .mat-mdc-select-placeholder {
+  font-size: 0.75rem !important;
+  line-height: 1rem !important;
+  padding-left: .25rem !important;
+  padding-right: .25rem !important;
+}
+.input-field .mat-mdc-select-arrow-wrapper {
+  margin-top: -5px !important;
+  margin-right: .75rem!important;
+}
+.cdk-overlay-dark-backdrop {
+  background: rgba(0,0,0,.62) !important;
+}
+.input-field .input-label {
+  color: #a6a6a6;
+  font-weight: 500;
+  font-size: 11px;
+  line-height: 13px;
+}
+.input-field input {
+  height: 20px;
+  font-size: 14px !important;
+  font-weight: 400;
+  margin-top: 4px;
+}
+.mat-mdc-option {
+  min-height: 32px!important;
+  font-size: 0.75rem !important;
+  line-height: 1rem !important;
+}
+.dialog-header {
+  font-size: 22px;
+  line-height: 22px;
+  font-weight: 600;
+}
+.dialog-button {
+  font-weight: 600;
+  font-size: 16px;
+  height: 50px;
+}
+
+.custom-scroll {
+  &::-webkit-scrollbar {
+    width: 4px;
+    cursor: pointer;
+    /*background-color: rgba(229, 231, 235, var(--bg-opacity));*/
+
+  }
+  &::-webkit-scrollbar-track {
+    background-color: rgba(229, 231, 235, var(--bg-opacity));
+    cursor: pointer;
+  }
+  &::-webkit-scrollbar-thumb {
+    cursor: pointer;
+    background-color: #a0aec0;
+    /*outline: 1px solid slategrey;*/
+  }
+}
+.custom-scroll-2 {
+  &::-webkit-scrollbar,
+  &::-webkit-scrollbar {
+    width: 6px;
+    height: 4px;
+  }
+
+  &::-webkit-scrollbar-track,
+  &::-webkit-scrollbar-track {
+    background: rdba(221,221,221,0.6);
+  }
+
+  &::-webkit-scrollbar-thumb,
+  &::-webkit-scrollbar-thumb{
+    background: #aaa;
+    border-radius: 3px;
+  }
+}
+
+.confirmDialog {
+  border-radius: 1.5rem !important;
+}
+.loader {
+  --tw-bg-opacity: .41 !important;
+  background-color: rgb(55 65 81 / var(--tw-bg-opacity)) !important;
+}
+
+.scrollable {
+  box-sizing: border-box;
+  overflow: hidden;
+
+  overflow-y: auto;
+  overflow: -moz-scrollbars-none;
+  -ms-overflow-style: none;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  scroll-behavior: smooth;
+
+  white-space: nowrap;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+.no-select {
+  -webkit-tap-highlight-color: transparent;
+  outline: none !important;
+  //border: none !important;
+  -webkit-touch-callout: none !important; /* iOS Safari */
+  -webkit-user-select: none !important; /* Safari */
+  -khtml-user-select: none !important; /* Konqueror HTML */
+  -moz-user-select: none !important; /* Old versions of Firefox */
+  -ms-user-select: none !important; /* Internet Explorer/Edge */
+  user-select: none !important; /* Non-prefixed version, currently
+                                  supported by Chrome, Edge, Opera and Firefox */
+
+  *:focus {
+    outline: 0 !important;
+    outline: none !important;
+  }
+}
+
+a.nav-item {
+  color: #098709;
+  line-height: 40px;
+  height: 40px;
+  font-size: 17px;
+  text-transform: uppercase;
+  font-weight: 700;
+  margin-left: 4rem;
+}
+
+.income-text {
+  color: #83f1af !important;
+  fill: #83f1af !important;
+}
+.outcome-text {
+  color: #ff8d70 !important;
+  fill: #ff8d70 !important;
+}
+.positive {
+  color: #00B28E;
+}
+.negative {
+  color: #FF6333;
+}
+
+.header-field {
+  font-size: 27px !important;
+  font-weight: 700 !important;
+}
+.table-header {
+  font-size: 13px !important;
+  line-height: 16px !important;
+  color: #a6a6a6 !important;
+  font-weight: 600 !important;
+  border-bottom: 1px solid #b8b8b8 !important;
+}

@@ -1,0 +1,164 @@
+<div class="flex flex-col min-h-screen pt-12 px-2 lg:px-8 xl:px-12">
+
+  <div class="flex flex-col bg-white rounded-3xl max-w-[700px] p-4 lg:p-8 border-[1.5px] border-gray-200 shadow-lg">
+    <div class="flex items-center space-x-4">
+      <button class="h-8 w-8 -ml-1 rounded-full border-transparent flex items-center justify-center hover:bg-gray-200 transition-all duration-300"
+              (click)="back()">
+        <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px"><path d="M0 0h24v24H0z" fill="none"/><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg>
+      </button>
+      <div class="text-xl">{{itemHeader}}</div>
+    </div>
+    <div [formGroup]="generalForm" class="">
+
+      <div class="mt-3 bg-input rounded-xl p-1 input-field">
+        <div class="input-label px-2">Имя поставщика</div>
+        <input class="w-full text-xs px-2 bg-input rounded-xl border-none outline-none"
+               placeholder="Укажите имя поставщика"
+               [required]="true"
+               [formControlName]="'full_name'">
+      </div>
+
+      <div class="mt-3 bg-input rounded-xl p-1 input-field">
+        <div class="input-label px-2">Комментарий</div>
+        <textarea class="w-full text-xs px-2 bg-input rounded-xl border-none outline-none"
+               placeholder="Текст комментария"
+               [formControlName]="'comment'"></textarea>
+      </div>
+
+      <div class="mt-3 bg-input rounded-xl p-1 input-field">
+        <div class="input-label px-2">Реквизиты</div>
+        <input class="w-full text-xs px-2 bg-input rounded-xl border-none outline-none"
+               placeholder="Укажите реквизиты"
+               [formControlName]="'credentials'">
+      </div>
+
+    </div>
+  </div>
+
+  <div class="mt-4 flex flex-col bg-white rounded-3xl max-w-[700px] p-4 lg:p-8 border-[1.5px] border-gray-200 shadow-lg overflow-hidden transition-all duration-300">
+    <div class="flex items-center justify-between">
+      <div class="flex items-start space-x-2">
+        <div class="text-lg">Контакты</div>
+        <div class="text-[10px] text-gray-400 font-bold">{{contactsAvailable.length}}</div>
+      </div>
+      <button class="h-8 w-8 rounded-full border-transparent flex items-center justify-center hover:bg-gray-200 transition-all duration-300"
+              (click)="contactsControl = !contactsControl">
+        <svg class="transition-all duration-300" [ngClass]="{'rotate-180': contactsControl}" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px"><path d="M0 0h24v24H0z" fill="none"/><path d="M16.59 8.59L12 13.17 7.41 8.59 6 10l6 6 6-6z"/></svg>
+      </button>
+    </div>
+    <ng-template [ngIf]="contactsControl">
+      <app-contact-card *ngFor="let contact of contactsAvailable; let last = last; let index = index"
+                        [item]="contact"
+                        [last]="last"
+                        (onRemove)="whenRemoveContact(index)"
+                        (onUpdate)="whenUpdateContact($event, index)"></app-contact-card>
+    </ng-template>
+    <button *ngIf="contactsControl" (click)="addContact()" class="rounded-full px-6 py-2 border-[1.5px] border-gray-200 fill-blue-400 hover:bg-gray-200 transition-all duration-300 mx-auto flex items-center">
+      <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px"><path d="M0 0h24v24H0z" fill="none"/><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
+      <div>Добавить контакт</div>
+    </button>
+<!--    <div [formGroup]="contactsForm" class="">-->
+
+<!--      <div *ngIf="contactsControl.value" class="mt-3 bg-gray-100 rounded-xl p-1 input-field">-->
+<!--        <div class="input-label px-2">Телефон</div>-->
+<!--        <input class="w-full text-xs px-2 bg-gray-100 rounded-xl border-none outline-none"-->
+<!--               placeholder="Укажите телефон"-->
+<!--               [formControlName]="'phone'">-->
+<!--      </div>-->
+<!--      <div *ngIf="contactsControl.value" class="mt-3 bg-gray-100 rounded-xl p-1 input-field">-->
+<!--        <div class="input-label px-2">Факс</div>-->
+<!--        <input class="w-full text-xs px-2 bg-gray-100 rounded-xl border-none outline-none"-->
+<!--               placeholder="Укажите факс"-->
+<!--               [formControlName]="'fax'">-->
+<!--      </div>-->
+<!--      <div *ngIf="contactsControl.value" class="mt-3 bg-gray-100 rounded-xl p-1 input-field">-->
+<!--        <div class="input-label px-2">Email</div>-->
+<!--        <input class="w-full text-xs px-2 bg-gray-100 rounded-xl border-none outline-none"-->
+<!--               placeholder="Укажите email"-->
+<!--               type="email"-->
+<!--               [formControlName]="'email'">-->
+<!--      </div>-->
+<!--      <div *ngIf="contactsControl.value" class="mt-3 bg-gray-100 rounded-xl p-1 input-field">-->
+<!--        <div class="input-label px-2">Адрес</div>-->
+<!--        <input class="w-full text-xs px-2 bg-gray-100 rounded-xl border-none outline-none"-->
+<!--               placeholder="Укажите адрес"-->
+<!--               [formControlName]="'address'">-->
+<!--      </div>-->
+
+<!--    </div>-->
+  </div>
+
+<!--  <div class="mt-4 flex flex-col bg-white rounded-3xl max-w-[700px] p-4 lg:p-8 border-[1.5px] border-gray-200 shadow-lg overflow-hidden transition-all duration-300"-->
+<!--       [ngClass]="{-->
+<!--          'h-[63px] lg:h-[95px]': !credentialsControl.value,-->
+<!--          'h-[130px] lg:h-[162px]': credentialsControl.value && !credentialsForm.controls['type'].value,-->
+<!--          'h-[465px] lg:h-[497px]': credentialsControl.value && credentialsForm.controls['type'].value == 1,-->
+<!--          'h-[532px] lg:h-[564px]': credentialsControl.value && credentialsForm.controls['type'].value == 2,-->
+<!--          'h-[331px] lg:h-[363px]': credentialsControl.value && credentialsForm.controls['type'].value == 3}">-->
+<!--    <div class="flex items-center justify-between">-->
+<!--      <div class="text-lg">Реквизиты</div>-->
+<!--      <button class=""></button>-->
+<!--    </div>-->
+<!--    <div [formGroup]="credentialsForm" class="">-->
+
+<!--      <div *ngIf="credentialsControl.value" class="mt-3 bg-gray-100 rounded-xl p-1 input-field">-->
+<!--        <div class="input-label px-2">Тип</div>-->
+<!--        <mat-select placeholder="Выберите тип поставщика" [formControlName]="'type'" class="mx-1.5">-->
+<!--          <mat-option *ngFor="let t of counterpartyTypes" [value]="t.id">{{t.name}}</mat-option>-->
+<!--        </mat-select>-->
+<!--&lt;!&ndash;        <input class="w-full text-xs px-2 bg-gray-100 rounded-xl border-none outline-none"&ndash;&gt;-->
+<!--&lt;!&ndash;               placeholder="Укажите телефон"&ndash;&gt;-->
+<!--&lt;!&ndash;               [formControlName]="'phone'">&ndash;&gt;-->
+<!--      </div>-->
+<!--      <div *ngIf="credentialsControl.value && credentialsForm.controls['type'].value" class="mt-3 bg-gray-100 rounded-xl p-1 input-field">-->
+<!--        <div class="input-label px-2">Полное наименование</div>-->
+<!--        <input class="w-full text-xs px-2 bg-gray-100 rounded-xl border-none outline-none"-->
+<!--               placeholder="Укажите полное наименование"-->
+<!--               [formControlName]="'full_name'">-->
+<!--      </div>-->
+<!--      <div *ngIf="credentialsControl.value && credentialsForm.controls['type'].value" class="mt-3 bg-gray-100 rounded-xl p-1 input-field">-->
+<!--        <div class="input-label px-2">ИНН</div>-->
+<!--        <input class="w-full text-xs px-2 bg-gray-100 rounded-xl border-none outline-none"-->
+<!--               placeholder="Укажите ИНН"-->
+<!--               [formControlName]="'inn'">-->
+<!--      </div>-->
+<!--      <div *ngIf="credentialsControl.value && credentialsForm.controls['type'].value && credentialsForm.controls['type'].value != 3"-->
+<!--           class="mt-3 bg-gray-100 rounded-xl p-1 input-field">-->
+<!--        <div class="input-label px-2">ОГРН{{credentialsForm.controls['type'].value == 1 ? 'ИП' : ''}}</div>-->
+<!--        <input class="w-full text-xs px-2 bg-gray-100 rounded-xl border-none outline-none"-->
+<!--               placeholder="Укажите ОГРН{{credentialsForm.controls['type'].value == 1 ? 'ИП' : ''}}"-->
+<!--               [formControlName]="'ogrn'">-->
+<!--      </div>-->
+<!--      <div *ngIf="credentialsControl.value && credentialsForm.controls['type'].value == 2" class="mt-3 bg-gray-100 rounded-xl p-1 input-field">-->
+<!--        <div class="input-label px-2">КПП</div>-->
+<!--        <input class="w-full text-xs px-2 bg-gray-100 rounded-xl border-none outline-none"-->
+<!--               placeholder="Укажите КПП"-->
+<!--               [formControlName]="'kpp'">-->
+<!--      </div>-->
+<!--      <div *ngIf="credentialsControl.value && credentialsForm.controls['type'].value && credentialsForm.controls['type'].value != 3" class="mt-3 bg-gray-100 rounded-xl p-1 input-field">-->
+<!--        <div class="input-label px-2">ОКПО</div>-->
+<!--        <input class="w-full text-xs px-2 bg-gray-100 rounded-xl border-none outline-none"-->
+<!--               placeholder="Укажите адрес"-->
+<!--               [formControlName]="'okpo'">-->
+<!--      </div>-->
+<!--      <div *ngIf="credentialsControl.value && credentialsForm.controls['type'].value" class="mt-3 bg-gray-100 rounded-xl p-1 input-field">-->
+<!--        <div class="input-label px-2">{{credentialsForm.controls['type'].value == 2 ? 'Юридический адрес' : 'Адрес регистрации'}}</div>-->
+<!--        <input class="w-full text-xs px-2 bg-gray-100 rounded-xl border-none outline-none"-->
+<!--               placeholder="Укажите адрес"-->
+<!--               [formControlName]="'address'">-->
+<!--      </div>-->
+<!--    </div>-->
+<!--  </div>-->
+
+  <div class="mt-4 flex flex-col lg:flex-row lg:items-center lg:space-x-8 space-y-4 lg:space-y-0 mb-8">
+    <button (click)="change()" class="rounded-xl py-2.5 px-6 text-white dialog-button disabled:bg-gray-400"
+            [ngClass]="{'bg-burger': id === 'new', 'bg-update': id !== 'new'}" [disabled]="!generalForm.valid">
+      {{itemHeader === 'Новый поставщик' ? 'Сохранить' : 'Обновить'}}
+    </button>
+    <button *ngIf="id !== 'new'"
+            (click)="remove()"
+            class="rounded-xl bg-remove py-2.5 px-6 text-white dialog-button">
+      Удалить
+    </button>
+  </div>
+</div>

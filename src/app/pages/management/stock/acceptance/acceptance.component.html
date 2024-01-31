@@ -1,0 +1,211 @@
+<div class="flex flex-col min-h-screen pt-12 px-2 lg:px-12 bg-back">
+
+  <div class="flex flex-col bg-white rounded-xl max-w-[750px] p-4 lg:p-8 border-[1.5px] border-gray-100">
+    <div class="flex items-center space-x-4">
+<!--      <button class="h-8 w-8 -ml-1 rounded-full border-transparent flex items-center justify-center hover:bg-gray-200 transition-all duration-300"-->
+<!--              (click)="back()">-->
+<!--        <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px"><path d="M0 0h24v24H0z" fill="none"/><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg>-->
+<!--      </button>-->
+      <div class="flex items-center space-x-2 header-field relative">
+        <div>Приемка от</div>
+        <div class="relative bg-white">
+          {{dateControl.value | date:'dd.MM.YYYY'}}
+          <input [formControl]="dateControl" class="absolute opacity-0 -z-10" [matDatepicker]="picker" value="12.01.2024 12:00">
+        </div>
+
+        <mat-datepicker #picker></mat-datepicker>
+        <button class="h-10 w-10 rounded-full border-none flex items-center justify-center hover:bg-gray-200 transition-all duration-300" (click)="picker.open()">
+          <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" ><path d="M0 0h24v24H0z" fill="none"/><path d="M17 12h-5v5h5v-5zM16 1v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2h-1V1h-2zm3 18H5V8h14v11z"/></svg>
+        </button>
+      </div>
+    </div>
+    <div [formGroup]="generalForm" class="grid lg:grid-cols-2 gap-x-4 gap-y-4 mt-4">
+
+      <div class="bg-input rounded-xl p-1 input-field h-[50px]">
+        <div class="input-label px-2 input-label">Склад</div>
+        <input class="w-full text-xs px-2 bg-input rounded-xl border-none outline-none"
+               placeholder="Выберите склад"
+               [required]="true"
+               [matAutocomplete]="whComplete"
+               [formControlName]="'warehouse'">
+        <mat-autocomplete #whComplete="matAutocomplete" [displayWith]="displayFn">
+          <mat-option *ngFor="let data of warehousesData | async"
+                      [value]="data ">
+            <div class="flex flex-col py-1">
+              <div *ngIf="data.name">{{data.name ? data.name : '-'}}</div>
+              <div style="font-size: 11px; line-height: 12px" class=" text-gray-400">{{data.common_warehouse_name}}</div>
+            </div>
+          </mat-option>
+        </mat-autocomplete>
+      </div>
+      <div class="bg-input rounded-xl p-1 input-field h-[50px]">
+        <div class="input-label px-2 input-label">Входящий номер</div>
+        <input class="w-full text-xs px-2 bg-input rounded-xl border-none outline-none"
+               placeholder="Укажите входящий и его дату"
+               [formControlName]="'incoming'">
+      </div>
+      <div class="flex flex-col">
+        <div class="bg-input rounded-xl p-1 input-field h-[50px]">
+          <div class="input-label px-2 input-label">Контрагент</div>
+          <input class="w-full text-xs px-2 bg-input rounded-xl border-none outline-none"
+                 placeholder="Укажите контрагента"
+                 [required]="true"
+                 [matAutocomplete]="cpComplete"
+                 [formControlName]="'counterparty'">
+          <mat-autocomplete #cpComplete="matAutocomplete" [displayWith]="displayFn">
+            <mat-option *ngFor="let data of counterpartiesData | async"
+                        [value]="data ">
+              <div *ngIf="data.full_name">{{data.full_name}}</div>
+            </mat-option>
+          </mat-autocomplete>
+        </div>
+        <div class="ml-6 text-[12px]">
+          <span>Баланс:</span>
+          <span class="text-burger ml-1">15 000 руб</span>
+        </div>
+      </div>
+      <div class="bg-input rounded-xl p-1 input-field h-[50px]">
+        <div class="input-label px-2 input-label">Комментарий</div>
+        <input class="w-full text-xs px-2 bg-input rounded-xl border-none outline-none"
+               placeholder="Текст комментария"
+               [formControlName]="'comment'">
+      </div>
+
+    </div>
+  </div>
+
+  <div class="mt-6 flex flex-col bg-white rounded-xl max-w-[1100px] p-4 lg:p-8 border-[1.5px] border-gray-100">
+    <div class="flex items-start space-x-2 text-lg">
+      <div class="header-field">Товары</div>
+      <div class="text-xs text-gray-400">{{operation.items?.length || 0}}</div>
+    </div>
+    <div *ngIf="operation.items && operation.items.length > 0"
+         class="hidden lg:grid grid-cols-15 gap-x-4 py-2 table-header mt-2" style="">
+      <div class="col-span-6">Наименование</div>
+      <div class="col-span-2 text-right">Количество</div>
+      <div class="col-span-2 text-right">Цена</div>
+      <div class="col-span-2 text-right">НДС</div>
+      <div class="col-span-2 text-right">Стоимость</div>
+    </div>
+    <app-operation-item-card *ngFor="let item of (operation.items || []); let index = index"
+                             [item]="item"
+                             (onUpdate)="whenUpdateItem($event, index)"
+                             (onRemove)="whenRemoveItem(index)"></app-operation-item-card>
+    <ng-template [ngIf]="!(operation.items && operation.items.length > 0)">
+      <div class="my-8 text-center text-gray-400 mx-auto">
+        Не добавлено ни одного товара
+      </div>
+    </ng-template>
+    <input [ngClass]="{'mt-4': operation.items && operation.items.length > 0}"
+           style="border: 1px solid #b8b8b8 !important"
+           class="rounded-lg px-6 py-2.5 lg:w-3/5 outline-gray-300"
+           [formControl]="itemsControl"
+           [matAutocomplete]="iComplete"
+           [placeholder]="'Добавить позицию - введите наименование'">
+    <mat-autocomplete #iComplete="matAutocomplete" [displayWith]="displayFn">
+      <mat-option *ngFor="let data of goodsData | async"
+                  [value]="data ">
+        <div class="flex flex-col py-1">
+          <div *ngIf="data.name">{{data.name ? data.name : '-'}}</div>
+        </div>
+      </mat-option>
+    </mat-autocomplete>
+    <div *ngIf="operation.items && operation.items.length > 0"
+         class="grid grid-cols-7 gap-x-4 py-2 font-bold mt-2">
+      <div class="col-span-5">Итого</div>
+      <div>
+        {{totalVat.toLocaleString('ru-RU')}}
+        <span class="">₽</span></div>
+      <div>
+        {{totalPrice.toLocaleString('ru-RU')}}
+        <span class="">₽</span></div>
+    </div>
+    <div *ngIf="operation.items && operation.items.length > 0"
+         class="flex items-center space-x-10">
+      <div>Накладные расходы:</div>
+      <input class="border-transparent outline-gray-200"
+             type="number"
+             [formControl]="overheadsControl">
+    </div>
+  </div>
+
+  <div class="mt-6 flex flex-col bg-white rounded-xl max-w-[1100px] p-4 lg:p-8 border-[1.5px] border-gray-100">
+    <div class="flex flex-col lg:flex-row items-center space-y-4 lg:space-y-0">
+      <div class="flex items-start space-x-2 text-lg">
+        <div class="header-field">Связанные платежи</div>
+        <div *ngIf="operation.payments" class="text-xs text-gray-400">{{operation.payments.length}}</div>
+      </div>
+
+      <div *ngIf="generalForm.valid" class="ml-8 flex space-x-10 lg:space-x-4">
+        <button class="rounded-full lg:rounded-xl h-[40px] w-[40px] lg:w-[160px] xl:w-[210px] lg:px-6 text-white fill-white dialog-button bg-income income-text flex items-center justify-center space-x-2"
+                (click)="createDdsOperation('income')">
+          <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px"><path d="M0 0h24v24H0z" fill="none"/><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
+          <div class="hidden lg:flex">Доход</div>
+        </button>
+        <button class="rounded-full lg:rounded-xl h-[40px] w-[40px] lg:w-[160px] xl:w-[210px] lg:px-6 text-white fill-white dialog-button bg-outcome outcome-text flex items-center justify-center space-x-2"
+                (click)="createDdsOperation('outcome')">
+          <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" ><path d="M0 0h24v24H0z" fill="none"/><path d="M19 13H5v-2h14v2z"/></svg>
+          <div class="hidden lg:flex">Расход</div>
+        </button>
+        <button class="rounded-full lg:rounded-xl h-[40px] w-[40px] lg:w-[160px] xl:w-[210px] lg:px-6 text-white fill-white dialog-button bg-transfer flex items-center justify-center space-x-2"
+                (click)="createDdsOperation('link')">
+          <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px">
+            <path d="M10,17.55,8.23,19.27a2.47,2.47,0,0,1-3.5-3.5l4.54-4.55a2.46,2.46,0,0,1,3.39-.09l.12.1a1,1,0,0,0,1.4-1.43A2.75,2.75,0,0,0,14,9.59a4.46,4.46,0,0,0-6.09.22L3.31,14.36a4.48,4.48,0,0,0,6.33,6.33L11.37,19A1,1,0,0,0,10,17.55ZM20.69,3.31a4.49,4.49,0,0,0-6.33,0L12.63,5A1,1,0,0,0,14,6.45l1.73-1.72a2.47,2.47,0,0,1,3.5,3.5l-4.54,4.55a2.46,2.46,0,0,1-3.39.09l-.12-.1a1,1,0,0,0-1.4,1.43,2.75,2.75,0,0,0,.23.21,4.47,4.47,0,0,0,6.09-.22l4.55-4.55A4.49,4.49,0,0,0,20.69,3.31Z"></path></svg>
+          <div class="hidden lg:flex">Привязать</div>
+        </button>
+      </div>
+    </div>
+    <div *ngIf="operation.payments && operation.payments.length > 0"
+         class="hidden lg:grid grid-cols-15 gap-x-4 py-2 table-header mt-2" style="">
+      <div class="col-span-2">Дата</div>
+      <div class="col-span-2 text-right">Сумма</div>
+      <div class="col-span-4 text-right">Счет</div>
+      <div class="col-span-4 text-right">Статья</div>
+      <div class="col-span-2 text-right">Описание</div>
+    </div>
+    <div *ngFor="let payment of (operation.payments || []); let index = index"
+         class="flex flex-col lg:grid lg:grid-cols-15 lg:gap-x-4 py-2 border-b-1 relative"
+         style="border-bottom: 1px solid #b8b8b8 !important;">
+      <div class="text-xs text-gray-400 lg:text-black text-sm lg:col-span-2">{{(payment.payment_date || '') | datetime:'DD.MM.YYYY'}}</div>
+      <div class="absolute lg:relative right-0 top-1/2 -translate-y-1/2 lg:col-span-2 text-right"
+           [ngClass]="{'positive': (payment.paid_sum || 0) >= 0, 'negative': (payment.paid_sum || 0) < 0}">
+        {{(payment.paid_sum || 0) | money:true:true}}
+      </div>
+      <div class="lg:col-span-4 lg:text-right">{{payment.wallet}}</div>
+      <div class="text-gray-400 lg:text-black lg:col-span-4 lg:text-right">{{payment.category}}</div>
+      <div class="text-gray-400 lg:text-black lg:col-span-2 lg:text-right">{{payment.comment}}</div>
+      <div class="flex lg:justify-end mt-2 lg:mt-0">
+        <div  *ngIf="!(payment.category && payment.category == 'Комиссия за переводы')"
+              class="flex items-center space-x-2 text-red-400 fill-red-400 hover:fill-red-600 hover:text-red-600 cursor-pointer ">
+          <svg (click)="unlinkPayment(payment.id || -1, index)"
+               class="transition-all duration-300"
+               xmlns="http://www.w3.org/2000/svg" height="22px" viewBox="0 0 24 24" width="22px">
+            <path d="M4.76,10.59a1,1,0,0,0,.26-2L3.26,8.15a1,1,0,1,0-.52,1.93l1.76.47A.78.78,0,0,0,4.76,10.59ZM8.62,5a1,1,0,0,0,1,.74.82.82,0,0,0,.26,0,1,1,0,0,0,.7-1.22l-.47-1.76a1,1,0,1,0-1.93.52Zm4.83,10A1,1,0,0,0,12,15L8.5,18.56a2.21,2.21,0,0,1-3.06,0,2.15,2.15,0,0,1,0-3.06L9,12a1,1,0,1,0-1.41-1.41L4,14.08A4.17,4.17,0,1,0,9.92,20l3.53-3.53A1,1,0,0,0,13.45,15ZM5.18,6.59a1,1,0,0,0,.7.29,1,1,0,0,0,.71-.29,1,1,0,0,0,0-1.41L5.3,3.89A1,1,0,0,0,3.89,5.3Zm16.08,7.33-1.76-.47A1,1,0,1,0,19,15.38l1.76.47.26,0a1,1,0,0,0,.26-2ZM15.38,19a1,1,0,0,0-1.23-.7,1,1,0,0,0-.7,1.22l.47,1.76a1,1,0,0,0,1,.74,1.15,1.15,0,0,0,.26,0,1,1,0,0,0,.71-1.23Zm3.44-1.57a1,1,0,0,0-1.41,1.41l1.29,1.29a1,1,0,0,0,1.41,0,1,1,0,0,0,0-1.41ZM21.2,7A4.16,4.16,0,0,0,14.08,4L10.55,7.56A1,1,0,1,0,12,9L15.5,5.44a2.21,2.21,0,0,1,3.06,0,2.15,2.15,0,0,1,0,3.06L15,12a1,1,0,0,0,0,1.41,1,1,0,0,0,1.41,0L20,9.92A4.19,4.19,0,0,0,21.2,7Z"></path>
+          </svg>
+          <div class="lg:hidden transition-all duration-300">Отвязать платёж</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="mt-6 pb-8 lg:pb-0 flex flex-col lg:flex-row items-center space-y-4 lg:space-y-0 lg:space-x-4">
+    <button class="rounded-xl px-6 text-white fill-white dialog-button bg-burger disabled:bg-gray-300 lg:h-[40px] w-[210px]"
+            *ngIf="id === 'new'; else patching"
+            [disabled]="generalForm.invalid || !(operation.items && operation.items.length > 0)"
+            (click)="createOperation()">
+      <div>Создать</div>
+    </button>
+    <ng-template #patching>
+      <button class="rounded-xl px-6 text-white fill-white dialog-button bg-update disabled:bg-gray-300 lg:h-[40px] w-full lg:w-[210px]"
+              [disabled]="generalForm.invalid || !(operation.items && operation.items.length > 0)"
+              (click)="patchOperation()">
+        <div>Обновить</div>
+      </button>
+      <button class="rounded-xl px-6 text-white fill-white dialog-button bg-remove disabled:bg-gray-300 lg:h-[40px] w-full lg:w-[210px]"
+              (click)="removeOperation()">
+        <div>Удалить</div>
+      </button>
+    </ng-template>
+  </div>
+
+</div>

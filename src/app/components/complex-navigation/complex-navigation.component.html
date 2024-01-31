@@ -1,0 +1,23 @@
+<div class="w-full
+            flex flex-col overflow-hidden
+            text-lg whitespace-nowrap
+            cursor-pointer text-md leading-tight
+            transition-all duration-200" #main style="height: 2.75rem">
+  <div class="flex items-center py-2 px-4 rounded-lg justify-between hover:bg-indigo-400 cursor-pointer" (click)="switch(main)">
+    <div class="flex items-center relative pl-8">
+      <mat-icon class="absolute z-30 left-0 top-1/2 -translate-y-1/2 menu-icon">{{icon}}</mat-icon>
+      <div>{{header}}</div>
+    </div>
+    <div class="w-7 h-7 flex items-center justify-center  transition-all duration-200"
+         [ngClass]="{'-rotate-180': expanded, '-rotate-90': !expanded}">
+      <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" ><path d="M0 0h24v24H0z" fill="none"/><path d="M16.59 8.59L12 13.17 7.41 8.59 6 10l6 6 6-6z"/></svg>
+    </div>
+  </div>
+  <div *ngFor="let item of items"
+       [routerLink]="item.routerLink"
+       [routerLinkActive]="'bg-indigo-400'"
+       (click)="systemService.menuStatus = false"
+       class=" h-11 flex items-center py-2 px-4 pl-12 rounded-lg hover:bg-indigo-400 cursor-pointer text-md leading-tight">
+    {{item.header}}
+  </div>
+</div>

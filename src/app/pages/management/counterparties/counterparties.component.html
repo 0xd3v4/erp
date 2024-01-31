@@ -1,0 +1,50 @@
+<div class="flex flex-col xl:flex-row min-h-screen pt-12 lg:px-8 xl:px-12 lg:space-x-4">
+  <app-side-navigation></app-side-navigation>
+  <div class="flex-1 flex flex-col">
+    <div class="flex items-center justify-between lg:justify-start space-x-4 px-4 lg:px-0">
+      <div class="rounded-full border-gray-200 border-[1.5px] w-full lg:w-96 bg-gray-200 text-gray-600 relative">
+        <input [formControl]="searchControl"
+               class="px-4 py-1.5 w-full rounded-full outline-none border-transparent bg-gray-200"
+               placeholder="Контрагент">
+        <svg class="absolute right-3 top-1/2 -translate-y-1/2 fill-gray-400" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" ><path d="M0 0h24v24H0z" fill="none"/><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
+      </div>
+      <button class="rounded-full border-gray-200 border-[1.5px] bg-gray-200 fill-blue-400 text-gray-600 hover:bg-gray-300 transition-all duration-300 px-1 lg:px-4 py-1 hidden lg:flex items-center"
+              (click)="createItem()">
+        <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px"><path d="M0 0h24v24H0z" fill="none"/><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
+        <span class="hidden lg:ml-2 lg:block">Добавить</span>
+      </button>
+      <button class="rounded-full border-gray-200 border-[1.5px] bg-gray-200 fill-blue-400 hover:bg-gray-300 transition-all duration-300 px-1 py-1 flex items-center lg:hidden"
+              (click)="createItemMobile()">
+        <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px"><path d="M0 0h24v24H0z" fill="none"/><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
+      </button>
+    </div>
+
+    <div class="my-4 rounded-3xl bg-white shadow-lg border-[1.5px] border-gray-200 flex-1 px-4 py-2 mx-4 lg:mx-0">
+      <div class="border-b-[1.5px] border-gray-200 py-2 hidden lg:grid grid-cols-5 lg:grid-cols-10 gap-x-4 text-xs text-gray-500">
+        <div class="col-span-4">Контрагент</div>
+<!--        <div class="hidden lg:flex col-span-3">Категория</div>-->
+<!--        <div class="hidden lg:flex">Ед.изм</div>-->
+        <!--        <div class="hidden lg:flex col-span-2">SKU</div>-->
+        <!--        <div class="hidden lg:flex col-span-3">Поставщик</div>-->
+<!--        <div class="hidden lg:flex col-span-2">Комментарий</div>-->
+      </div>
+      <cdk-virtual-scroll-viewport id="scrollView"
+                                   itemSize="50"
+                                   class="h-mobileview xl:h-viewport w-full">
+        <div *cdkVirtualFor="let item of entityDataSource; let last = last; let first = first">
+          <div *ngIf="item" class="w-full py-2
+                  flex items-center justify-between text-sm
+                  border-b cursor-pointer no-select
+                  hover:bg-gray-100
+                  transition-all duration-200"
+               (click)="editItem(item)">
+            <div class="col-span-5 sm:col-span-4 text-md">{{item.full_name}}</div>
+            <button class="rounded-full p-1 border-transparent fill-red-600 hover:bg-gray-200 transition-all duration-300 flex items-center" (click)="deleteItem(item, $event)">
+              <svg xmlns="http://www.w3.org/2000/svg" height="22px" viewBox="0 0 24 24" width="22px"><path d="M0 0h24v24H0z" fill="none"/><path d="M0 0h24v24H0V0z" fill="none"/><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zm2.46-7.12l1.41-1.41L12 12.59l2.12-2.12 1.41 1.41L13.41 14l2.12 2.12-1.41 1.41L12 15.41l-2.12 2.12-1.41-1.41L10.59 14l-2.13-2.12zM15.5 4l-1-1h-5l-1 1H5v2h14V4z"/></svg>
+            </button>
+          </div>
+        </div>
+      </cdk-virtual-scroll-viewport>
+    </div>
+  </div>
+</div>
